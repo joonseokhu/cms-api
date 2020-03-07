@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "ES2019",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
+    // "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@controllers/*": ["./controllers/*"],
+      "@interfaces/*": ["./interfaces/*"],
+      "@models/*": ["./models/*"],
+      "@routes/*": ["./routes/*"],
+      "@services/*": ["./services/*"],
+      "@utils/*": ["./utils/*"],
+    },
+    "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
