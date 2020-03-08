@@ -13,6 +13,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     'arrow-parens': ['error', 'as-needed'],
     'no-console': 'off',
+    'max-len': 'warn',
     '@typescript-eslint/no-unused-vars': 'off'
   }
 };
