@@ -1,38 +1,32 @@
 import * as auth from '@services/auth';
-import { Middleware } from '@/interfaces';
+import {
+  Rejection, Resolution, response, Middleware,
+} from '@/api';
 
-export const login: Middleware = async (req, res, next) => {
-  try {
-    const {
-      email,
-      password,
-    } = req.body;
+export const login = Middleware(async (req, Res, Rej) => {
+  const {
+    email,
+    password,
+  } = req.body;
 
-    const user = await auth.checkPassword({ email }, password);
+  const user = await auth.checkPassword({ email }, password);
 
-    const token = await auth.authToken.sign(user);
+  const token = await auth.authToken.sign(user);
 
-    res.json({
-      token,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res({
+    token,
+  });
+});
 
-export const checkToken: Middleware = async (req, res, next) => {
-  try {
-    const [authType, token] = req.headers.authorization.split(' ');
-    const user = await auth.authToken.verify(token);
+export const checkToken = Middleware(async (req, Res, Rej) => {
+  const [authType, token] = req.headers.authorization.split(' ');
+  const user = await auth.authToken.verify(token);
 
-    res.json({
-      user,
-      password: null,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res({
+    user,
+    password: null,
+  });
+});
 
 // export const login;
 

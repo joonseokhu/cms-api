@@ -1,85 +1,57 @@
 import { getRepository } from 'typeorm';
-import { Middleware } from '@/interfaces';
 import { Post } from '@/models/post.model';
+import { Middleware } from '@/api';
 
-export const createPost: Middleware = async (req, res, next) => {
-  try {
-    const {
-      title,
-      content,
-    } = req.body;
+export const createPost = Middleware(async (req, Res, Rej) => {
+  const {
+    title,
+    content,
+  } = req.body;
 
-    const post = new Post();
+  const post = new Post();
 
-    post.title = title;
-    post.content = content;
-    // post.postStatus
-    // post.postType
-    // post.contentType
-    // post.tags
+  post.title = title;
+  post.content = content;
+  // post.postStatus
+  // post.postType
+  // post.contentType
+  // post.tags
 
-    const result = await getRepository(Post).save(post);
+  const result = await getRepository(Post).save(post);
 
-    res.json({
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res(result);
+});
 
-export const getPosts: Middleware = async (req, res, next) => {
-  try {
-    // const { } = req.query;
-    const [result, count] = await getRepository(Post).findAndCount();
+export const getPosts = Middleware(async (req, Res, Rej) => {
+  // const { } = req.query;
+  const [results, count] = await getRepository(Post).findAndCount();
 
-    res.json({
-      data: {
-        result,
-        count,
-      },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res({
+    results,
+    count,
+  });
+});
 
-export const getPost: Middleware = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const getPost = Middleware(async (req, Res, Rej) => {
+  const { id } = req.params;
 
-    const result = await getRepository(Post).findOne(id);
+  const result = await getRepository(Post).findOne(id);
 
-    res.json({
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res(result);
+});
 
-export const updatePost: Middleware = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const data = req.body;
+export const updatePost = Middleware(async (req, Res, Rej) => {
+  const { id } = req.params;
+  const data = req.body;
 
-    const result = await getRepository(Post).update(id, data);
+  const result = await getRepository(Post).update(id, data);
 
-    res.json({
-      data: result,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res(result);
+});
 
-export const deletePost: Middleware = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const result = await getRepository(Post).delete(id);
+export const deletePost = Middleware(async (req, Res, Rej) => {
+  const { id } = req.params;
+  const result = await getRepository(Post).delete(id);
 
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
+  return new Res(result);
+});

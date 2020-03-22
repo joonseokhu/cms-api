@@ -1,15 +1,11 @@
-import { Middleware } from '@/interfaces';
 import { createUser } from '../services/user.services';
+import { Middleware } from '@/api';
 
-export const register: Middleware = async (req, res, next) => {
-  try {
-    const data = req.body;
-    const result = await createUser(data);
-    res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
+export const register = Middleware(async (req, Res, Rej) => {
+  const data = req.body;
+  const result = await createUser(data);
+  return new Res(result);
+});
 
 // export const login;
 

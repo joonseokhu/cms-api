@@ -1,4 +1,6 @@
 export interface ResponseData {
-  status: number,
-  data: object,
+  status: boolean,
+  statusCode: number,
+  message: string,
+  data: any,
 }

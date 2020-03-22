@@ -3,7 +3,7 @@ import hpp from 'hpp';
 import helmet from 'helmet';
 import cors from 'cors';
 import logger from 'morgan';
-import api from './api';
+import api from '@routes/index.ts';
 
 const app = express();
 const env = process.env.NODE_ENV === 'production';
