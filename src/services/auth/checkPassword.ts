@@ -1,6 +1,9 @@
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { User } from '@models/user.model';
+import {
+  response,
+} from '@/api';
 
 type UserInfo = {
   user?: User,
@@ -23,7 +26,7 @@ const getUserFromInfo = async (userInfo: UserInfo) => {
     });
   }
 
-  throw new Error('404');
+  throw response.NO(404, '해당 유저가 없습니다.');
 };
 
 const checkUserPassword = async (
@@ -34,7 +37,7 @@ const checkUserPassword = async (
 
   const result = await bcrypt.compare(password, user.password);
 
-  if (!result) throw new Error('401');
+  if (!result) throw response.NO(401, '로그인 정보가 올바르지 않습니다.');
 
   return user;
 };

@@ -3,12 +3,12 @@ import {
 } from 'express';
 
 import {
-  Rejection, Resolution, response, Middleware,
+  respond, response,
 } from '@/api';
 
 const router = Router();
 
-router.use((req, res, next) => response(res, new Rejection(400, '잘못된 URL 입니다.', {
+router.use((req, res, next) => respond(res, response.NO(400, '잘못된 URL 입니다.', {
   method: req.method,
   url: req.originalUrl,
 })));
@@ -18,6 +18,6 @@ router.use((
   req: Request,
   res: Response,
   next: NextFunction,
-) => response(res, new Rejection(err.status, err.message, err)));
+) => respond(res, response.NO(err.status, err.message, err)));
 
 export default router;

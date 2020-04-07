@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm';
 import { Post } from '@/models/post.model';
-import { Middleware } from '@/api';
+import { Controller } from '@/api';
 
-export const createPost = Middleware(async (req, Res, Rej) => {
+export const createPost = Controller([], async (req, OK, NO) => {
   const {
     title,
     content,
@@ -19,39 +19,39 @@ export const createPost = Middleware(async (req, Res, Rej) => {
 
   const result = await getRepository(Post).save(post);
 
-  return new Res(result);
+  return OK(result);
 });
 
-export const getPosts = Middleware(async (req, Res, Rej) => {
+export const getPosts = Controller([], async (req, OK, NO) => {
   // const { } = req.query;
   const [results, count] = await getRepository(Post).findAndCount();
 
-  return new Res({
+  return OK({
     results,
     count,
   });
 });
 
-export const getPost = Middleware(async (req, Res, Rej) => {
+export const getPost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
 
   const result = await getRepository(Post).findOne(id);
 
-  return new Res(result);
+  return OK(result);
 });
 
-export const updatePost = Middleware(async (req, Res, Rej) => {
+export const updatePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
   const data = req.body;
 
   const result = await getRepository(Post).update(id, data);
 
-  return new Res(result);
+  return OK(result);
 });
 
-export const deletePost = Middleware(async (req, Res, Rej) => {
+export const deletePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
   const result = await getRepository(Post).delete(id);
 
-  return new Res(result);
+  return OK(result);
 });

@@ -3,17 +3,14 @@ import { getRepository } from 'typeorm';
 import { User } from '@models/user.model';
 import checkPassword from './checkPassword';
 
-const privateKey = process.env.JWT_SECRET;
-
-const jwt = new JWT(privateKey, {
-  expiresIn: '2days',
-});
+const jwt = new JWT(process.env.JWT_SECRET);
 
 export const sign = async (user: User) => {
   const token = await jwt.sign({
     id: user.id,
+  }, {
+    expiresIn: '2days',
   });
-
   return token;
 };
 
