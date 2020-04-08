@@ -1,50 +1,34 @@
-import {
-  check,
-  validationResult,
-  param,
-  body,
-  query,
-} from 'express-validator';
-
-// import { response, respond } from '@/api';
-
+import * as EV from 'express-validator';
 import NO from '@/api/Rejection';
-
 import { Middleware } from '@/api/interfaces';
 import { respond } from '@/api/Controller';
 
-type Validator = (functions: object) => Middleware[];
+type Validate = (...middlewares: Middleware[]) => Middleware[];
 
-export const validate = (cb: Validator): Middleware[] => {
-  const configs = cb({
-    check,
-    param,
-    body,
-    query,
-  });
+// interface Validate {
+//   (...middlewares: Middleware[]): Middleware[],
 
+// }
+
+const validate: Validate = (...middlewares) => {
   const handIn: Middleware = (req, res, next) => {
-    const errors = validationResult(req);
+    const errors = EV.validationResult(req);
     if (!errors.isEmpty()) {
-      respond(
+      return respond(
         res,
         NO(422, '요청 형식이 잘못되었습니다.', errors.array()),
       );
     }
-    next();
+    return next();
   };
 
   return [
-    ...configs,
+    ...middlewares,
     handIn,
   ];
 };
 
-export default validate;
-
-export {
-  check,
-  param,
-  body,
-  query,
-};
+export default Object.assign(
+  validate,
+  EV,
+);

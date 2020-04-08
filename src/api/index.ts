@@ -12,11 +12,13 @@ import {
   respond,
 } from '@/api/Controller';
 
+import validate from '@/api/validate';
+
 const response = {
   OK,
   NO,
 };
 
 export {
-  respond, response, Controller,
+  respond, response, Controller, validate,
 };

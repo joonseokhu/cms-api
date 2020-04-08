@@ -1,9 +1,15 @@
+/* eslint-disable import/first */
 import 'dotenv/config';
 import 'reflect-metadata';
 import os from 'os';
 import http from 'http';
 import chalk from 'chalk';
+import Timing from '@utils/timing';
+
+const timing = Timing('Starting');
+
 import app from './app';
+
 import createConnectionToDatabase from '@/db/connection';
 
 const getIP = (): string => {
@@ -18,7 +24,9 @@ const port = process.env.PORT || 3000;
 
 http.createServer(app).listen(port, () => {
   console.log(chalk.blue('🚀 Server is running'));
-  console.log(chalk.blue(`http://127.0.0.1:${port}`));
-  console.log(chalk.blue(`http://${getIP()}:${port}`));
+  console.log(chalk.blue(`🔗 Local:  http://127.0.0.1:${port}`));
+  console.log(chalk.blue(`🔗 Subnet: http://${getIP()}:${port}`));
   createConnectionToDatabase();
+  timing('Started');
+  console.log('\n');
 });

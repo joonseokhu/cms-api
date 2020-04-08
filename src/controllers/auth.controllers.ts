@@ -1,8 +1,5 @@
 import * as auth from '@services/auth';
-import {
-  Controller,
-  response,
-} from '@/api';
+import { Controller } from '@/api';
 
 export const login = Controller([], async (req, OK, NO) => {
   const {
@@ -14,16 +11,16 @@ export const login = Controller([], async (req, OK, NO) => {
 
   const token = await auth.authToken.sign(user);
 
-  return response.OK({
+  return OK({
     token,
   });
 });
 
-export const checkToken = Controller([], async (req, Res, Rej) => {
+export const checkToken = Controller([], async (req, OK, NO) => {
   const [authType, token] = req.headers.authorization.split(' ');
   const user = await auth.authToken.verify(token);
 
-  return new Res({
+  return OK({
     user,
     password: null,
   });

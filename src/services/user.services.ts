@@ -6,13 +6,13 @@ import {
 // import { sign, verify } from '@utils/jwt';
 import { User } from '../models/user.model';
 
-interface registerForm {
+interface RegisterForm {
   email: string,
   username: string,
   password: string,
 }
 
-export const createUser = async (data: registerForm) => {
+export const createUser = async (data: RegisterForm) => {
   const {
     email,
     username,
@@ -20,7 +20,7 @@ export const createUser = async (data: registerForm) => {
 
   const repository = getRepository(User);
 
-  console.log({ email });
+  console.log(data);
 
   const findResult = await repository.find({
     email,
