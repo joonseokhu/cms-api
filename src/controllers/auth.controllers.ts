@@ -16,16 +16,6 @@ export const login = Controller([], async (req, OK, NO) => {
   });
 });
 
-export const checkToken = Controller([], async (req, OK, NO) => {
-  const [authType, token] = req.headers.authorization.split(' ');
-  const user = await auth.authToken.verify(token);
-
-  return OK({
-    user,
-    password: null,
-  });
-});
-
 // export const dummy = Controller([
 //     authorize(({ visitor, level }) => [
 //       visitor(false),

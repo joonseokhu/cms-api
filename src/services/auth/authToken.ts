@@ -1,7 +1,8 @@
 import JWT from '@utils/jwt';
 import { getRepository } from 'typeorm';
 import { User } from '@models/user.model';
-import checkPassword from './checkPassword';
+
+// import checkPassword from './checkPassword';
 
 const jwt = new JWT(process.env.JWT_SECRET);
 

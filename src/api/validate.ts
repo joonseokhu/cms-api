@@ -28,7 +28,4 @@ const validate: Validate = (...middlewares) => {
   ];
 };
 
-export default Object.assign(
-  validate,
-  EV,
-);
+export default Object.assign(validate, EV);

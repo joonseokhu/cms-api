@@ -20,5 +20,8 @@ const response = {
 };
 
 export {
-  respond, response, Controller, validate,
+  respond,
+  response,
+  Controller,
+  validate,
 };
