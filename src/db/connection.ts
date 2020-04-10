@@ -2,6 +2,8 @@ import { createConnection } from 'typeorm';
 import { Post } from '@/models/post.model';
 import { Tag } from '@/models/tag.model';
 import { User } from '@/models/user.model';
+import { UserProfile } from '@/models/userProfile.model';
+import { UserTag } from '@/models/userTag.model';
 
 const {
   DB_HOST,
@@ -22,6 +24,8 @@ export default () => createConnection({
     Post,
     Tag,
     User,
+    UserProfile,
+    UserTag,
   ],
   synchronize: true,
 });

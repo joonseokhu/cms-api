@@ -40,7 +40,7 @@ export const controller: Controller = (pre, main) => {
       respond(res, NO(err));
     }
   };
-  const router = Router();
+  const router = Router({ mergeParams: true });
   router.use(checkToken, ...pre, mainServiceWrapper);
   return router;
 };

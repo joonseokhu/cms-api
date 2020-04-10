@@ -5,7 +5,7 @@ export enum UserStatus {
   registered,
   normal,
   admin,
-  owner,
+  root,
 }
 
 export interface CreateUserProps {

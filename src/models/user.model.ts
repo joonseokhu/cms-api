@@ -1,16 +1,17 @@
 import {
-  Entity, Column, ManyToMany, OneToOne,
+  Entity, Column, ManyToMany, OneToOne, JoinColumn,
 } from 'typeorm';
-import { StandardEntity } from '@/models/standard';
+import { StandardEntity } from '@models/standard';
+import { UserProfile } from '@models/userProfile.model';
+import { UserTag } from '@models/userTag.model';
 import { UserStatus } from '../interfaces/user.interfaces';
-// import { Tag } from '../tag/tag.model';
 
 @Entity()
 export class User extends StandardEntity {
   @Column({
     default: UserStatus.draft,
   })
-  UserStatus: UserStatus;
+  status: UserStatus;
 
   @Column()
   email: string;
@@ -32,6 +33,10 @@ export class User extends StandardEntity {
   })
   resignedAt: Date;
 
-  // @ManyToMany(type => Tag, tag => tag.posts)
-  // tags: Tag[];
+  @OneToOne(type => UserProfile)
+  @JoinColumn()
+  profile: UserProfile;
+
+  @ManyToMany(type => UserTag, userTag => userTag.users)
+  tags: UserTag[];
 }
