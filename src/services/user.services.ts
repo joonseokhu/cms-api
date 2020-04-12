@@ -8,7 +8,6 @@ import {
 import { User } from '../models/user.model';
 import { UserProfile } from '../models/userProfile.model';
 
-console.log(getRandomChars(20));
 interface RegisterForm {
   email: string,
   username: string,
@@ -20,12 +19,9 @@ interface RegisterForm {
  */
 const optionalFindQuery = (query: any): any => Object
   .entries(query)
-  .reduce((acc, [key, value]) => ((value === undefined)
-    ? acc
-    : {
-      ...acc,
-      [key]: value,
-    }), {});
+  .reduce((acc, [key, value]) => (
+    (value === undefined) ? acc : { ...acc, [key]: value }
+  ), {});
 
 export const createUser = async (data: RegisterForm) => {
   const db = getManager();

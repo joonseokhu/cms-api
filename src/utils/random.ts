@@ -1,3 +1,10 @@
+export const hasValue = (value: any) => {
+  if (value === undefined) return false;
+  if (value === null) return false;
+  if (value === '') return false;
+  return true;
+};
+
 export const getRandomInt = (from: number = 0, to: number = 10000): number => {
   const min = Math.ceil(from);
   const max = Math.floor(to);
@@ -31,21 +38,20 @@ export const createArray = (from: number, to?: number): number[] => {
   return arr;
 };
 
-export const PickFromArray = <T>(array: T[], length: number = 1): T[] => (
+export const pickFromArray = <T>(array: T[], length: number = 1): T[] => (
   shuffleArray<T>(array).slice(0, length)
 );
 
 /**
- * @todo 아스키코드 쓰지말고 그냥 글씨로 쓰자
  * @todo 대소숫 글자타입별 사용여부 & 최소길이 정할수있게
  */
-export const getRandomChars = (length: number = 1): string => {
-  const chars = [
-    ...createArray(48, 57), // 숫자
-    ...createArray(65, 90), // 대문자
-    ...createArray(97, 122), // 소문자
-  ];
-  return PickFromArray(chars, length)
-    .map(e => String.fromCharCode(e))
-    .join('');
+
+export const getRandomChars = (length: number = 1) => {
+  const chars = {
+    number: '0123456789',
+    upperCase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lowerCase: 'abcdefghijklmnopqrstuvwxyz',
+  };
+  const allChars: string[] = (chars.number + chars.upperCase + chars.lowerCase).split('');
+  return pickFromArray<string>(allChars, length).join('');
 };

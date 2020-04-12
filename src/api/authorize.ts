@@ -1,55 +1,87 @@
 import { Request } from 'express';
-import * as auth from '@services/auth';
 import NO from '@/api/Rejection';
-import { Middleware } from '@/api/interfaces';
+import { Middleware, SafeUser } from '@/api/interfaces';
 import { respond } from '@/api/Controller';
+import { UserStatus } from '../interfaces/user.interfaces';
 
 interface Authorizer {
-  (user: object): boolean;
+  (user: SafeUser): null|string|string[];
 }
 
+// type Authorize = (...authorizers: Authorizer[]) => (user: SafeUser) => Promise<string[]>;
 type Authorize = (...authorizers: Authorizer[]) => Middleware;
 
-const testAuthorizers = (authorizers: Authorizer[], user: object): [boolean, boolean] => {
-  const passedCount = authorizers.map(authorizer => authorizer(user))
-    .filter(Boolean)
-    .length;
-  const failedCount = authorizers.length - passedCount;
-  console.log({ passedCount, failedCount });
-  // [모두 통과했는지, 모두 실패했는지]
-  return [!failedCount, !passedCount];
+interface testAuthorizers {
+  (authorizers: Authorizer[], user: SafeUser): testAuthorizers['return']
+  return?: {
+    hasAllPassed: boolean;
+    hasAllFailed: boolean;
+    errors: string[]
+  }
+}
+
+const testAuthorizers: testAuthorizers = (authorizers, user) => {
+  const errors = authorizers
+    .map(authorizer => authorizer(user))
+    .filter(error => (
+      Array.isArray(error) ? error.length : error
+    ));
+  const failedCount = errors.length;
+  const passedCount = authorizers.length - failedCount;
+  return {
+    hasAllPassed: !failedCount,
+    hasAllFailed: !passedCount,
+    errors: errors.flat(),
+  };
 };
 
-const isUser = (shouldBeUser: boolean): Authorizer => user => {
-  console.log(`expected ${shouldBeUser ? 'user' : 'visitor'}, they are ${user ? 'user' : 'visitor'}`);
-  return (shouldBeUser === !!user);
+const hasAuth = (authStatus: boolean): Authorizer => user => {
+  const message = `expected ${authStatus ? 'user' : 'visitor'}, they are ${user ? 'user' : 'visitor'}`;
+  return (authStatus === !!user)
+    ? null
+    : message;
+};
+
+const userStatus = (requiredStatus: UserStatus): Authorizer => user => {
+  if (!user) return `required ${requiredStatus} but not authenticated`;
+  return (requiredStatus === user.status)
+    ? null
+    : `required status: ${requiredStatus}, current status: ${user.status}`;
 };
 
 const and = (...authorizers: Authorizer[]): Authorizer => user => {
-  const [hasAllPassed, hasAllFailed] = testAuthorizers(authorizers, user);
-  return hasAllPassed;
+  const { hasAllPassed, errors } = testAuthorizers(authorizers, user);
+  return hasAllPassed
+    ? null
+    : errors;
 };
 
 const or = (...authorizers: Authorizer[]): Authorizer => user => {
-  const [hasAllPassed, hasAllFailed] = testAuthorizers(authorizers, user);
-  return !hasAllFailed;
+  const { hasAllFailed, errors } = testAuthorizers(authorizers, user);
+  return !hasAllFailed
+    ? null
+    : errors;
 };
 
+// const authorize: Authorize = (...authorizers) => user => {
+//   const { hasAllPassed, errors } = testAuthorizers(authorizers, user);
+//   return hasAllPassed ? [] : errors;
+// };
 const authorize: Authorize = (...authorizers) => {
   const handIn: Middleware = async (req, res, next) => {
-    const [hasAllPassed, hasAllFailed] = testAuthorizers(authorizers, req.user);
+    const { hasAllPassed, errors } = testAuthorizers(authorizers, req.user);
     return hasAllPassed
       ? next()
       : respond(
         res,
-        NO(403, '권한이 없습니다.'),
+        NO(403, '권한이 없습니다.', errors),
       );
   };
   return handIn;
 };
 
 export default Object.assign(authorize, {
-  isUser,
+  hasAuth,
   and,
   or,
 });

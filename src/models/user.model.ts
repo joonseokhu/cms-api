@@ -19,7 +19,9 @@ export class User extends StandardEntity {
   @Column()
   password: string;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   username: string;
 
   @Column({

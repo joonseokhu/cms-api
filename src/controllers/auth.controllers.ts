@@ -1,4 +1,5 @@
-import * as auth from '@services/auth';
+import { checkUserPassword } from '@services/auth.services';
+import authToken from '@services/auth/authToken';
 import { Controller } from '@/api';
 
 export const login = Controller([], async (req, OK, NO) => {
@@ -7,9 +8,9 @@ export const login = Controller([], async (req, OK, NO) => {
     password,
   } = req.body;
 
-  const user = await auth.checkPassword({ email }, password);
+  const user = await checkUserPassword({ email }, password);
 
-  const token = await auth.authToken.sign(user);
+  const token = await authToken.sign(user);
 
   return OK({
     token,

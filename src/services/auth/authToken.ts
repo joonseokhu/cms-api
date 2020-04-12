@@ -1,10 +1,13 @@
 import JWT from '@utils/jwt';
-import { getRepository } from 'typeorm';
+import { getManager } from 'typeorm';
 import { User } from '@models/user.model';
 
 // import checkPassword from './checkPassword';
+export interface Payload {
+  id: number
+}
 
-const jwt = new JWT(process.env.JWT_SECRET);
+const jwt = new JWT<Payload>(process.env.JWT_SECRET);
 
 export const sign = async (user: User) => {
   const token = await jwt.sign({
@@ -16,10 +19,10 @@ export const sign = async (user: User) => {
 };
 
 export const verify = async (token: string) => {
-  const payload: any = await jwt.verify(token);
+  const db = getManager();
+  const payload = await jwt.verify(token);
   const { id } = payload;
-  const repository = getRepository(User);
-  const user = await repository.findOne(id);
+  const user = await db.findOne(User, id);
   return user;
 };
 

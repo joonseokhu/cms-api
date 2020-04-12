@@ -3,13 +3,12 @@ import { Controller, validate } from '@/api';
 import authorize from '@/api/authorize';
 
 export const register = Controller([
-  authorize(
-    // authorize.include(),
-    // authorize.exclude(),
-  ),
+  // authorize(
+  //   authorize.isUser(true),
+  // ),
   validate(
     validate.body('email').isEmail(),
-    validate.body('username').isLength({ min: 2, max: 8 }),
+    validate.body('username').isLength({ min: 4, max: 20 }),
     validate.body('password').isLength({ min: 8, max: 50 }),
   ),
 ], async (req, OK, NO) => {
@@ -18,7 +17,19 @@ export const register = Controller([
   return OK(result);
 });
 
-export const getUsers = Controller([], async (req, OK, NO) => {
+export const getUsers = Controller([
+  authorize(
+    authorize.hasAuth(false),
+    authorize.and(
+      authorize.hasAuth(false),
+      authorize.hasAuth(true),
+      authorize.and(
+        authorize.hasAuth(true),
+        authorize.hasAuth(false),
+      ),
+    ),
+  ),
+], async (req, OK, NO) => {
   const { query } = req;
   const result = await user.getUser(0, query);
   return OK(result);
