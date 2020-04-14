@@ -1,7 +1,7 @@
 {
   "name": "cms-api",
   "version": "1.0.0",
-  "description": "cms api by joonseok hu",
+  "description": "CMS API by Joonseok Hu",
   "main": "index.js",
   "scripts": {
     "lint": "npx eslint ./src/*.ts ./src/**/*.ts",
@@ -9,8 +9,9 @@
     "serve": "npx nodemon --exec \"npm run ts-server\"",
     "dev": "npx nodemon --exec \"npm run lint && npm run ts-server\""
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Joonseok Hu",
+  "license": "UNLICENSED",
+  "private": true,
   "dependencies": {
     "@types/jsonwebtoken": "^8.3.7",
     "bcrypt": "^4.0.0",
