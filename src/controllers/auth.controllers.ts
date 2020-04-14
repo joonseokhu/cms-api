@@ -16,20 +16,3 @@ export const login = Controller([], async (req, OK, NO) => {
     token,
   });
 });
-
-// export const dummy = Controller([
-//     authorize(({ visitor, level }) => [
-//       visitor(false),
-//       level(1),
-//     ]),
-//     validate(({ param }) => [
-//       param('id').isInt(),
-//     ]),
-//   ],
-//   async (req, res, rej) => {
-
-//   },
-// );
-// export const login;
-
-// export const resign;

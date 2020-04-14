@@ -13,21 +13,19 @@ export interface ResponseData {
   data: any,
 }
 
-export type SafeUser = Omit<User, 'password'>;
+// export User;
+
+// Omit<User, 'password'> {
+//   password?: string;
+// }
+
+export { User };
 
 export interface ExtendedRequest extends Request {
-  user?: SafeUser;
+  user?: User;
 }
 
 export type Middleware = (req: ExtendedRequest, res: Response, next?: NextFunction) => void;
-
-// interface MainServiceParam {
-//   req: ExtendedRequest;
-//   OK: any;
-//   NO: any;
-//   next: NextFunction;
-//   user: SafeUser;
-// }
 
 export type MainService = (request: ExtendedRequest, OK: any, NO: any, next?: NextFunction) => Promise<ResponseData>;
 // export type MainService = (params: MainServiceParam) => Promise<ResponseData>;

@@ -1,18 +1,17 @@
 import { Request } from 'express';
 import NO from '@/api/Rejection';
-import { Middleware, SafeUser } from '@/api/interfaces';
+import { Middleware, User } from '@/api/interfaces';
 import { respond } from '@/api/Controller';
 import { UserStatus } from '../interfaces/user.interfaces';
 
 interface Authorizer {
-  (user: SafeUser): null|string|string[];
+  (user: User): null|string|string[];
 }
 
-// type Authorize = (...authorizers: Authorizer[]) => (user: SafeUser) => Promise<string[]>;
 type Authorize = (...authorizers: Authorizer[]) => Middleware;
 
 interface testAuthorizers {
-  (authorizers: Authorizer[], user: SafeUser): testAuthorizers['return']
+  (authorizers: Authorizer[], user: User): testAuthorizers['return']
   return?: {
     hasAllPassed: boolean;
     hasAllFailed: boolean;
@@ -74,7 +73,7 @@ const authorize: Authorize = (...authorizers) => {
       ? next()
       : respond(
         res,
-        NO(403, '권한이 없습니다.', errors),
+        NO(403, 'Not enough authority', [...new Set(errors)]),
       );
   };
   return handIn;
@@ -82,10 +81,10 @@ const authorize: Authorize = (...authorizers) => {
 
 export default Object.assign(authorize, {
   hasAuth,
+  userStatus,
   and,
   or,
 });
-
 
 /**
  * 비회원만

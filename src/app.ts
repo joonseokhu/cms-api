@@ -3,7 +3,7 @@ import hpp from 'hpp';
 import helmet from 'helmet';
 import cors from 'cors';
 import logger from 'morgan';
-import api from '@routes/index.ts';
+import api, { settlement } from '@routes/index.ts';
 
 const app = express();
 const env = process.env.NODE_ENV === 'production';
@@ -31,6 +31,8 @@ app.use(express.urlencoded({
   extended: true,
 }));
 
-app.use(api);
+app.use('/api', api);
+app.use('/graphql', api);
+app.use(settlement);
 
 export default app;

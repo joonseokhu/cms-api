@@ -1,11 +1,15 @@
 import {
+  PrimaryGeneratedColumn, UpdateDateColumn,
   Entity, Column, ManyToMany, OneToOne,
 } from 'typeorm';
 import { StandardEntity } from '@/models/standard';
 // import { Tag } from '../tag/tag.model';
 
 @Entity()
-export class UserProfile extends StandardEntity {
+export class UserProfile {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({
     nullable: true,
   })
@@ -30,4 +34,7 @@ export class UserProfile extends StandardEntity {
     nullable: true,
   })
   description: string;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

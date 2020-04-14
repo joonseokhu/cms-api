@@ -1,57 +1,34 @@
-import { getRepository } from 'typeorm';
+import { PostStatus, PostType, ContentType } from '@interfaces/post.interfaces';
+import * as postService from '@services/post.services';
 import { Post } from '@/models/post.model';
 import { Controller } from '@/api';
 
-export const createPost = Controller([], async (req, OK, NO) => {
-  const {
-    title,
-    content,
-  } = req.body;
-
-  const post = new Post();
-
-  post.title = title;
-  post.content = content;
-  // post.postStatus
-  // post.postType
-  // post.contentType
-  // post.tags
-
-  const result = await getRepository(Post).save(post);
-
-  return OK(result);
+export const createDraftPost = Controller([], async (req, OK, NO) => {
+  const post = await postService.createPost(req.user);
+  return OK(post);
 });
 
-export const getPosts = Controller([], async (req, OK, NO) => {
-  // const { } = req.query;
-  const [results, count] = await getRepository(Post).findAndCount();
-
-  return OK({
-    results,
-    count,
-  });
+export const getOnePost = Controller([], async (req, OK, NO) => {
+  const id = Number(req.params.id);
+  const post = await postService.getPost({ id }, req.user);
+  return OK(post);
 });
 
-export const getPost = Controller([], async (req, OK, NO) => {
-  const { id } = req.params;
-
-  const result = await getRepository(Post).findOne(id);
-
-  return OK(result);
+export const getAllPosts = Controller([], async (req, OK, NO) => {
+  const posts = await postService.getPost(req.query, req.user);
+  return OK(posts);
 });
 
 export const updatePost = Controller([], async (req, OK, NO) => {
-  const { id } = req.params;
-  const data = req.body;
-
-  const result = await getRepository(Post).update(id, data);
-
-  return OK(result);
+  const currentPost = await postService.getPost(Number(req.params.id), req.user);
+  if ((currentPost as Post).user.id !== req.user.id) throw NO(403, 'Not your entity(ies)');
+  const nextPost = await postService.updatePost(Number(req.params.id), req.body);
+  return OK();
 });
 
 export const deletePost = Controller([], async (req, OK, NO) => {
-  const { id } = req.params;
-  const result = await getRepository(Post).delete(id);
-
-  return OK(result);
+  const currentPost = await postService.getPost(Number(req.params.id), req.user);
+  if ((currentPost as Post).user.id !== req.user.id) throw NO(403, 'Not your entity(ies)');
+  const nextPost = await postService.deletePost(Number(req.params.id));
+  return OK();
 });

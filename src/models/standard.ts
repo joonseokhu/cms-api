@@ -1,6 +1,7 @@
 import {
-  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Column,
+  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Column, ManyToOne,
 } from 'typeorm';
+import { User } from '@models/user.model';
 
 export class StandardEntity {
   @PrimaryGeneratedColumn()

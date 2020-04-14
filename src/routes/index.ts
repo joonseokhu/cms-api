@@ -14,4 +14,5 @@ router.use('/auth', auth);
 
 router.use(settlement);
 
+export { settlement };
 export default router;

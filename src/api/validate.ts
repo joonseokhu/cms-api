@@ -1,4 +1,4 @@
-import * as EV from 'express-validator';
+import * as expressValidator from 'express-validator';
 import NO from '@/api/Rejection';
 import { Middleware } from '@/api/interfaces';
 import { respond } from '@/api/Controller';
@@ -12,7 +12,7 @@ type Validate = (...middlewares: Middleware[]) => Middleware[];
 
 const validate: Validate = (...middlewares) => {
   const handIn: Middleware = (req, res, next) => {
-    const errors = EV.validationResult(req);
+    const errors = expressValidator.validationResult(req);
     if (!errors.isEmpty()) {
       return respond(
         res,
@@ -28,4 +28,4 @@ const validate: Validate = (...middlewares) => {
   ];
 };
 
-export default Object.assign(validate, EV);
+export default Object.assign(validate, expressValidator);

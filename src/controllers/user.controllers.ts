@@ -3,9 +3,9 @@ import { Controller, validate } from '@/api';
 import authorize from '@/api/authorize';
 
 export const register = Controller([
-  // authorize(
-  //   authorize.isUser(true),
-  // ),
+  authorize(
+    authorize.hasAuth(false),
+  ),
   validate(
     validate.body('email').isEmail(),
     validate.body('username').isLength({ min: 4, max: 20 }),
@@ -19,15 +19,7 @@ export const register = Controller([
 
 export const getUsers = Controller([
   authorize(
-    authorize.hasAuth(false),
-    authorize.and(
-      authorize.hasAuth(false),
-      authorize.hasAuth(true),
-      authorize.and(
-        authorize.hasAuth(true),
-        authorize.hasAuth(false),
-      ),
-    ),
+    authorize.hasAuth(true),
   ),
 ], async (req, OK, NO) => {
   const { query } = req;

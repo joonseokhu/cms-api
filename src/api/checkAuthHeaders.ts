@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import authToken from '@services/auth/authToken';
 import {
-  ResponseData, Middleware, MainService, Controller, SafeUser,
+  ResponseData, Middleware, MainService, Controller,
 } from '@/api/interfaces';
 
 import OK from '@/api/Resolution';
@@ -22,27 +22,18 @@ const respond = (res: Response, data: ResponseData) => res
 //   }
 // }
 
-// export const checkToken = async (req: Request): Promise<SafeUser> => {
-//   const token = req.headers.authorization;
-//   if (!token) return null;
-//   const [authType, jwt] = token.split(' ');
-//   const user = await authToken.verify(jwt);
-//   const { password, ...safeUser } = user;
-//   return safeUser;
-// };
-
 export const checkTokenAndSetUser: Middleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
     if (!token) return next();
     const [authType, jwt] = token.split(' ');
+    if (authType !== 'Bearer') throw NO(401, 'Invalid authorization header prefix');
     const user = await authToken.verify(jwt);
-    const { password, ...safeUser } = user;
-    req.user = safeUser || null;
+    req.user = user;
     return next();
   } catch (err) {
     console.error('AUTH ERROR');
     console.error(err);
-    return respond(res, NO(err));
+    return respond(res, NO(401, 'Invalid auth token', err));
   }
 };

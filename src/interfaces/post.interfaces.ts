@@ -2,7 +2,8 @@ export enum PostStatus {
   deleted,
   blocked,
   draft,
-  publish,
+  secret,
+  public,
 }
 
 export enum PostType {

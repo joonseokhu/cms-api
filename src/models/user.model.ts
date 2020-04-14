@@ -1,5 +1,6 @@
 import {
-  Entity, Column, ManyToMany, OneToOne, JoinColumn,
+  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn,
+  Entity, Column, ManyToMany, OneToOne, JoinColumn, OneToMany,
 } from 'typeorm';
 import { StandardEntity } from '@models/standard';
 import { UserProfile } from '@models/userProfile.model';
@@ -7,7 +8,10 @@ import { UserTag } from '@models/userTag.model';
 import { UserStatus } from '../interfaces/user.interfaces';
 
 @Entity()
-export class User extends StandardEntity {
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column({
     default: UserStatus.draft,
   })
@@ -16,13 +20,21 @@ export class User extends StandardEntity {
   @Column()
   email: string;
 
-  @Column()
+  @Column({
+    select: false,
+  })
   password: string;
 
   @Column({
     unique: true,
   })
   username: string;
+
+  @CreateDateColumn()
+  registeredAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 
   @Column({
     type: 'datetime',

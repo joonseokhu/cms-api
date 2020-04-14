@@ -61,18 +61,13 @@ export const getUser = async (id: number, query: any) => {
     tags,
   } = query;
 
-  const sanitizeUser = (user: User) => {
-    const { password, ...result } = user;
-    return result;
-  };
-
   if (id) {
     const user = await db.findOne(User, {
       where: { id },
       relations: ['profile'],
     });
     if (!user) return response.NO(404, '찾을 수 없습니다.');
-    return sanitizeUser(user);
+    return user;
   }
 
   const users = await db.find(User, {
@@ -84,5 +79,5 @@ export const getUser = async (id: number, query: any) => {
     }),
     relations: ['profile'],
   });
-  return users.map(sanitizeUser);
+  return users;
 };
