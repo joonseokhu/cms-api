@@ -2,6 +2,9 @@ import JWT from '@utils/jwt';
 import { getManager } from 'typeorm';
 import { User } from '@models/user.model';
 
+import OK from '@/api/Resolution';
+import NO from '@/api/Rejection';
+
 // import checkPassword from './checkPassword';
 export interface Payload {
   id: number
@@ -26,7 +29,20 @@ export const verify = async (token: string) => {
   return user;
 };
 
+const validate = async (token: string): Promise<User> => {
+  try {
+    if (!token) return null;
+    const [authType, authToken] = token.split(' ');
+    if (authType !== 'Bearer') throw NO(401, 'Invalid authorization header prefix');
+    const user = await verify(authToken);
+    return user;
+  } catch (err) {
+    throw NO(401, 'Invalid auth Token', err);
+  }
+};
+
 export default {
   sign,
   verify,
+  validate,
 };

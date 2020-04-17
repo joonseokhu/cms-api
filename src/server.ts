@@ -5,12 +5,11 @@ import os from 'os';
 import http from 'http';
 import chalk from 'chalk';
 import Timing from '@utils/timing';
+import createConnectionToDatabase from '@/db/connection';
 
 const timing = Timing('Starting');
 
 import app from './app';
-
-import createConnectionToDatabase from '@/db/connection';
 
 const getIP = (): string => {
   const ifaces = os.networkInterfaces();

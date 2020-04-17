@@ -16,3 +16,9 @@ export const login = Controller([], async (req, OK, NO) => {
     token,
   });
 });
+
+export const validateToken = Controller([], async (req, OK, NO) => {
+  const token = req.headers.authorization;
+  const user = await authToken.validate(token);
+  return OK(user);
+});

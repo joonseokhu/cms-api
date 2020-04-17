@@ -4,7 +4,7 @@ import {
 import { PostStatus, PostType, ContentType } from '@interfaces/post.interfaces';
 import { StandardEntity } from '@models/standard';
 import { User } from '@models/user.model';
-import { Tag } from '@models/tag.model';
+import { PostTag } from '@/models/postTag.model';
 
 @Entity()
 export class Post extends StandardEntity {
@@ -44,6 +44,6 @@ export class Post extends StandardEntity {
   @ManyToOne(type => User)
   user: User;
 
-  @ManyToMany(type => Tag, tag => tag.posts)
-  tags: Tag[];
+  @ManyToMany(type => PostTag, tag => tag.posts)
+  tags: PostTag[];
 }

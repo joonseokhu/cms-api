@@ -2,10 +2,10 @@ import { getManager } from 'typeorm';
 import { optionalFindQuery, AddOption } from '@utils/db';
 import { Post } from '@/models/post.model';
 import { User } from '@/api/interfaces';
+import { response } from '@/api';
 import {
   PostStatus, PostType, ContentType, CreatePostProps,
 } from '../interfaces/post.interfaces';
-import { response } from '@/api';
 
 // title,
 // content,
@@ -31,7 +31,8 @@ export const getPost = async (query: any, currentUser: User): Promise<Post|Post[
     postType,
   } = query;
   const user = Number(query.user) || undefined;
-  const me = currentUser?.id;
+
+  const currentUserId = currentUser?.id || 0;
 
   if (id) {
     const post = await db.findOne(Post, {
@@ -39,7 +40,7 @@ export const getPost = async (query: any, currentUser: User): Promise<Post|Post[
         id,
       }, [
         { postStatus: PostStatus.public },
-        { postStatus, user: me },
+        { postStatus, user: currentUserId },
       ]),
       relations: ['user'],
     });
@@ -47,17 +48,18 @@ export const getPost = async (query: any, currentUser: User): Promise<Post|Post[
     return post;
   }
 
-  // console.log(
-  //   (!user || (!!me && !!user && (user === me))) ? me : null
-  // );
-
   const posts = await db.find(Post, {
     where: AddOption({
       title,
       postType,
     }, [
-      // { user: (!user || (!!me && !!user && (user === me))) ? me : null, postStatus },
-      { user, postStatus: PostStatus.public },
+      {
+        user: currentUserId,
+      },
+      {
+        user,
+        postStatus: PostStatus.public,
+      },
     ]),
     relations: ['user'],
   });

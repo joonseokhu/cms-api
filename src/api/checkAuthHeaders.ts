@@ -25,15 +25,12 @@ const respond = (res: Response, data: ResponseData) => res
 export const checkTokenAndSetUser: Middleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-    if (!token) return next();
-    const [authType, jwt] = token.split(' ');
-    if (authType !== 'Bearer') throw NO(401, 'Invalid authorization header prefix');
-    const user = await authToken.verify(jwt);
+    const user = await authToken.validate(token);
     req.user = user;
     return next();
   } catch (err) {
     console.error('AUTH ERROR');
     console.error(err);
-    return respond(res, NO(401, 'Invalid auth token', err));
+    return respond(res, err);
   }
 };

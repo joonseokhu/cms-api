@@ -1,7 +1,7 @@
 import { getManager, getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { User } from '@models/user.model';
-import { response } from '@/api';
+import { response, Controller } from '@/api';
 
 type UserInfo = {
   user?: User,

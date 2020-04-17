@@ -1,6 +1,6 @@
-import * as user from '../services/user.services';
 import { Controller, validate } from '@/api';
 import authorize from '@/api/authorize';
+import * as user from '../services/user.services';
 
 export const register = Controller([
   authorize(

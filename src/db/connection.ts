@@ -1,6 +1,6 @@
 import { createConnection } from 'typeorm';
 import { Post } from '@/models/post.model';
-import { Tag } from '@/models/tag.model';
+import { PostTag } from '@/models/postTag.model';
 import { User } from '@/models/user.model';
 import { UserProfile } from '@/models/userProfile.model';
 import { UserTag } from '@/models/userTag.model';
@@ -22,7 +22,7 @@ export default () => createConnection({
   password: DB_PASSWORD,
   entities: [
     Post,
-    Tag,
+    PostTag,
     User,
     UserProfile,
     UserTag,

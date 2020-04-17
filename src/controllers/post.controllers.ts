@@ -20,15 +20,17 @@ export const getAllPosts = Controller([], async (req, OK, NO) => {
 });
 
 export const updatePost = Controller([], async (req, OK, NO) => {
-  const currentPost = await postService.getPost(Number(req.params.id), req.user);
+  const id = Number(req.params.id);
+  const currentPost = await postService.getPost({ id }, req.user);
   if ((currentPost as Post).user.id !== req.user.id) throw NO(403, 'Not your entity(ies)');
-  const nextPost = await postService.updatePost(Number(req.params.id), req.body);
+  const nextPost = await postService.updatePost(id, req.body);
   return OK();
 });
 
 export const deletePost = Controller([], async (req, OK, NO) => {
-  const currentPost = await postService.getPost(Number(req.params.id), req.user);
+  const id = Number(req.params.id);
+  const currentPost = await postService.getPost({ id }, req.user);
   if ((currentPost as Post).user.id !== req.user.id) throw NO(403, 'Not your entity(ies)');
-  const nextPost = await postService.deletePost(Number(req.params.id));
+  const nextPost = await postService.deletePost(id);
   return OK();
 });

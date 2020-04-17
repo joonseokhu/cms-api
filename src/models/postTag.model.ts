@@ -5,7 +5,7 @@ import { StandardEntity } from '@/models/standard';
 import { Post } from './post.model';
 
 @Entity()
-export class Tag extends StandardEntity {
+export class PostTag extends StandardEntity {
   @Column({
     unique: true,
   })

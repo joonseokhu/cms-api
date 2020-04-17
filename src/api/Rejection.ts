@@ -1,6 +1,6 @@
 import { ResponseData } from '@/api/interfaces';
 
-export class Rejection implements ResponseData {
+export class Rejection extends Error implements ResponseData {
   public status: boolean;
 
   public statusCode: number;
@@ -10,6 +10,7 @@ export class Rejection implements ResponseData {
   public data: any;
 
   constructor(error: number|Rejection|Error, message?: string, data?: any) {
+    super();
     this.status = false;
     if (typeof error === 'number') {
       this.statusCode = error || 500;
