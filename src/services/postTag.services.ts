@@ -1,3 +1,15 @@
+import $PostTag, { PostTag } from '@models/postTag.model';
+import { User, SafeUser } from '@models/user.model';
+
+export const createTag = async (name: string, user: SafeUser): Promise<PostTag> => {
+  const postTag = await $PostTag.create({
+    name,
+    user: user._id,
+  });
+
+  return postTag;
+};
+
 // import { optionalFindQuery, AddOption } from '@utils/db';
 // import { getManager } from 'typeorm';
 // import { Post } from '@models/post.model';

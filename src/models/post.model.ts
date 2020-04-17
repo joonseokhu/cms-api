@@ -11,20 +11,20 @@ export interface Post extends Document {
   status: PostStatus;
   postType: PostType;
   contentType: ContentType;
-  user: User;
   tags: PostTag[];
+  createdBy: User,
   createdAt: Date;
   publishedAt: Date;
   updatedAt: Date;
 }
 
 const PostSchema = new Schema<Post>({
-  title: { type: String, required: true },
-  content: { type: String, required: true },
+  title: { type: String },
+  content: { type: String },
   status: { type: String, default: PostStatus[PostStatus.draft] },
   postType: { type: String, default: PostType[PostType.ordinary] },
   contentType: { type: String, default: ContentType[ContentType.plainText] },
-  user: { type: ID, ref: 'User', required: true },
+  createdBy: { type: ID, ref: 'User', required: true },
   tags: [{ type: ID, ref: 'PostTag' }],
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },

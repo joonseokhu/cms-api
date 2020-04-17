@@ -58,14 +58,14 @@ export const getPost = async (query: any, currentUser: SafeUser): Promise<Post|P
   return posts;
 };
 
-export const updatePost = async (_id: number, data: any): Promise<any> => {
+export const updatePost = async (_id: string, data: any): Promise<any> => {
   // const nextPost = Object.assign(post, data);
   const result = await $Post.update({ _id }, data);
   // if (!result.nModified) throw response.NO(404, 'Entity not found');
   return result;
 };
 
-export const deletePost = async (_id: number): Promise<any> => {
+export const deletePost = async (_id: string): Promise<any> => {
   // const nextPost = Object.assign(post, data);
   const result = await $Post.remove({ _id });
   // if (!result.nRemoved) throw response.NO(404, 'Entity not found');

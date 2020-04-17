@@ -29,5 +29,4 @@ http.createServer(app).listen(port, () => {
   // connectToMariaDB();
   connectToMongoDB(app);
   timing('Started');
-  console.log('\n');
 });
