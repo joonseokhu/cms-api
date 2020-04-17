@@ -1,4 +1,4 @@
-import { User } from '@models/user.model';
+// import { User } from '@models/user.model';
 
 export const optionalFindQuery = (query: any): any => Object
   .entries(query)
@@ -6,9 +6,9 @@ export const optionalFindQuery = (query: any): any => Object
     (value === undefined) ? acc : { ...acc, [key]: value }
   ), {});
 
-export const AddOption = (common: any, options: any[]): any[] => (
-  options.map(option => ({
-    ...optionalFindQuery(common),
-    ...optionalFindQuery(option),
-  }))
-);
+// export const AddOption = (common: any, options: any[]): any[] => (
+//   options.map(option => ({
+//     ...optionalFindQuery(common),
+//     ...optionalFindQuery(option),
+//   }))
+// );

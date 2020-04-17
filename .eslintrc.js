@@ -14,6 +14,7 @@ module.exports = {
     'arrow-parens': ['error', 'as-needed'],
     'no-console': 'off',
     'max-len': 'warn',
+    'no-underscore-dangle': 'off',
     '@typescript-eslint/no-unused-vars': 'off'
   },
   parserOptions: {

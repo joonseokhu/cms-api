@@ -1,20 +1,20 @@
-import {
-  PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Column, ManyToOne,
-} from 'typeorm';
-import { User } from '@models/user.model';
+// import {
+//   PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Column, ManyToOne,
+// } from 'typeorm';
+// import { User } from '@models/user.model';
 
-export class StandardEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+// export class StandardEntity {
+//   @PrimaryGeneratedColumn()
+//   id: number;
 
-  @CreateDateColumn()
-  createdAt: Date;
+//   @CreateDateColumn()
+//   createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+//   @UpdateDateColumn()
+//   updatedAt: Date;
 
-  @Column({
-    nullable: true,
-  })
-  extraData: string;
-}
+//   @Column({
+//     nullable: true,
+//   })
+//   extraData: string;
+// }

@@ -1,7 +1,7 @@
 import { getManager } from 'typeorm';
-import { optionalFindQuery, AddOption } from '@utils/db';
-import { Post } from '@/models/post.model';
-import { User } from '@/api/interfaces';
+// import { optionalFindQuery, AddOption } from '@utils/db';
+import $Post, { Post } from '@models/post.model';
+import { User, SafeUser } from '@/api/interfaces';
 import { response } from '@/api';
 import {
   PostStatus, PostType, ContentType, CreatePostProps,
@@ -14,70 +14,60 @@ import {
 // contentType,
 // tags,
 
-export const createPost = async (currentUser: User): Promise<Post> => {
-  const db = getManager();
-  const post = new Post();
-  post.user = currentUser;
-  const result = await db.save(post);
-  return result;
+export const createPost = async (currentUser: SafeUser): Promise<Post> => {
+  const post = await $Post.create({
+    user: currentUser._id,
+    title: '',
+    content: '',
+  });
+  return post;
 };
 
-export const getPost = async (query: any, currentUser: User): Promise<Post|Post[]> => {
-  const db = getManager();
+export const getPost = async (query: any, currentUser: SafeUser): Promise<Post|Post[]> => {
   const {
     id,
     title,
     postStatus,
     postType,
   } = query;
+
   const user = Number(query.user) || undefined;
 
   const currentUserId = currentUser?.id || 0;
 
   if (id) {
-    const post = await db.findOne(Post, {
-      where: AddOption({
-        id,
-      }, [
-        { postStatus: PostStatus.public },
+    const post = await $Post.findOne({
+      _id: id,
+      $or: [
+        { postStatus: PostStatus[PostStatus.public] },
         { postStatus, user: currentUserId },
-      ]),
-      relations: ['user'],
-    });
+      ],
+    }).populate('user', '-password');
     if (!post) throw response.NO(404, 'Entity not found');
     return post;
   }
 
-  const posts = await db.find(Post, {
-    where: AddOption({
-      title,
-      postType,
-    }, [
-      {
-        user: currentUserId,
-      },
-      {
-        user,
-        postStatus: PostStatus.public,
-      },
-    ]),
-    relations: ['user'],
-  });
+  const posts = await $Post.find({
+    title,
+    postType,
+    $or: [
+      { user: currentUserId },
+      { postStatus: PostStatus[PostStatus.public] },
+    ],
+  }).populate('user', '-password');
   return posts;
 };
 
-export const updatePost = async (id: number, data: any): Promise<any> => {
-  const db = getManager();
+export const updatePost = async (_id: number, data: any): Promise<any> => {
   // const nextPost = Object.assign(post, data);
-  const result = await db.update(Post, id, data);
-  if (!result.raw.changedRows) throw response.NO(404, 'Entity not found');
-  return true;
+  const result = await $Post.update({ _id }, data);
+  // if (!result.nModified) throw response.NO(404, 'Entity not found');
+  return result;
 };
 
-export const deletePost = async (id: number): Promise<any> => {
-  const db = getManager();
+export const deletePost = async (_id: number): Promise<any> => {
   // const nextPost = Object.assign(post, data);
-  const result = await db.delete(Post, id);
-  if (!result.raw.changedRows) throw response.NO(404, 'Entity not found');
-  return true;
+  const result = await $Post.remove({ _id });
+  // if (!result.nRemoved) throw response.NO(404, 'Entity not found');
+  return result;
 };

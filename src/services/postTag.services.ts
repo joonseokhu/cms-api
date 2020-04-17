@@ -1,15 +1,15 @@
-import { getManager } from 'typeorm';
-import { optionalFindQuery, AddOption } from '@utils/db';
-import { Post } from '@/models/post.model';
-import { PostTag } from '@/models/postTag.model';
-import { User } from '@/api/interfaces';
-import { response } from '@/api';
+// import { optionalFindQuery, AddOption } from '@utils/db';
+// import { getManager } from 'typeorm';
+// import { Post } from '@models/post.model';
+// import { PostTag } from '@models/postTag.model';
+// import { User } from '@/api/interfaces';
+// import { response } from '@/api';
 
-interface GetTagParams {
-  id?: number;
-  name?: string;
-  post?: number;
-}
+// interface GetTagParams {
+//   id?: number;
+//   name?: string;
+//   post?: number;
+// }
 // export const getTag = async (query: GetTagParams): Promise<Array<PostTag>|PostTag> => {
 //   const db = getManager();
 //   const {

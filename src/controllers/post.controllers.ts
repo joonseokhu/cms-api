@@ -1,6 +1,6 @@
 import { PostStatus, PostType, ContentType } from '@interfaces/post.interfaces';
 import * as postService from '@services/post.services';
-import { Post } from '@/models/post.model';
+import { Post } from '@models/post.model';
 import { Controller } from '@/api';
 
 export const createDraftPost = Controller([], async (req, OK, NO) => {

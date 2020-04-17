@@ -5,8 +5,9 @@ import {
   response,
 } from '@/api';
 // import { sign, verify } from '@utils/jwt';
-import { User } from '../models/user.model';
-import { UserProfile } from '../models/userProfile.model';
+import { optionalFindQuery } from '@utils/db';
+import $User, { User } from '../models/user.model';
+import $UserProfile, { UserProfile } from '../models/userProfile.model';
 
 interface RegisterForm {
   email: string,
@@ -17,43 +18,43 @@ interface RegisterForm {
 /**
  * @todo 이거 나중에 모듈로 빼자
  */
-const optionalFindQuery = (query: any): any => Object
-  .entries(query)
-  .reduce((acc, [key, value]) => (
-    (value === undefined) ? acc : { ...acc, [key]: value }
-  ), {});
+// const optionalFindQuery = (query: any): any => Object
+//   .entries(query)
+//   .reduce((acc, [key, value]) => (
+//     (value === undefined) ? acc : { ...acc, [key]: value }
+//   ), {});
 
 export const createUser = async (data: RegisterForm) => {
-  const db = getManager();
+  // const db = getManager();
   const {
     email,
     username,
   } = data;
 
-  const findResult = await db.find(User, {
+  const findResult = await $User.findOne({
     email,
   });
 
-  if (findResult.length) throw response.NO(403, '이미 등록된 이메일 주소입니다.');
+  if (findResult) throw response.NO(403, '이미 등록된 이메일 주소입니다.');
 
-  const user = new User();
   const password = await bcrypt.hash(data.password, 10);
 
-  const profile = new UserProfile();
-  await db.save(profile);
+  const profile = await $UserProfile.create({});
 
-  user.email = email;
-  user.username = username;
-  user.password = password;
-  user.profile = profile;
+  const user = await $User.create({
+    email,
+    username,
+    password,
+    profile,
+  });
 
-  const result = await db.save(user);
+  const { password: _, ...safeUser } = user;
 
-  return result;
+  return safeUser;
 };
 
-export const getUser = async (id: number, query: any) => {
-  const db = getManager();
+export const getUser = async (_id: number, query: any) => {
+  // const db = getManager();
   const {
     email,
     username,
@@ -61,23 +62,19 @@ export const getUser = async (id: number, query: any) => {
     tags,
   } = query;
 
-  if (id) {
-    const user = await db.findOne(User, {
-      where: { id },
-      relations: ['profile'],
-    });
+  if (_id) {
+    const user = await $User.findById(_id);
     if (!user) return response.NO(404, '찾을 수 없습니다.');
     return user;
   }
 
-  const users = await db.find(User, {
-    where: optionalFindQuery({
-      email,
-      username,
-      status,
-      tags,
-    }),
-    relations: ['profile'],
-  });
+  const users = await $User.find(optionalFindQuery({
+    email,
+    username,
+    status,
+    tags,
+  }), { password: false })
+    .populate('profile');
+
   return users;
 };

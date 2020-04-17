@@ -5,7 +5,8 @@ import os from 'os';
 import http from 'http';
 import chalk from 'chalk';
 import Timing from '@utils/timing';
-import createConnectionToDatabase from '@/db/connection';
+// import connectToMariaDB from '@/db/mariadb';
+import connectToMongoDB from '@/db/mongodb';
 
 const timing = Timing('Starting');
 
@@ -25,7 +26,8 @@ http.createServer(app).listen(port, () => {
   console.log(chalk.blue('🚀 Server is running'));
   console.log(chalk.blue(`🔗 Local:  http://127.0.0.1:${port}`));
   console.log(chalk.blue(`🔗 Subnet: http://${getIP()}:${port}`));
-  createConnectionToDatabase();
+  // connectToMariaDB();
+  connectToMongoDB(app);
   timing('Started');
   console.log('\n');
 });

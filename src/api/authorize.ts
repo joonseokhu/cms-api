@@ -1,17 +1,17 @@
 import { Request } from 'express';
 import NO from '@/api/Rejection';
-import { Middleware, User } from '@/api/interfaces';
+import { Middleware, User, SafeUser } from '@/api/interfaces';
 import { respond } from '@/api/Controller';
 import { UserStatus } from '../interfaces/user.interfaces';
 
 interface Authorizer {
-  (user: User): null|string|string[];
+  (user: SafeUser): null|string|string[];
 }
 
 type Authorize = (...authorizers: Authorizer[]) => Middleware;
 
 interface testAuthorizers {
-  (authorizers: Authorizer[], user: User): testAuthorizers['return']
+  (authorizers: Authorizer[], user: SafeUser): testAuthorizers['return']
   return?: {
     hasAllPassed: boolean;
     hasAllFailed: boolean;

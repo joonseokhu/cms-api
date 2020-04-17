@@ -4,7 +4,7 @@ import {
   Request, Response, NextFunction, ErrorRequestHandler, Router,
 } from 'express';
 
-import { User } from '@/models/user.model';
+import { User } from '@models/user.model';
 
 export interface ResponseData {
   status: boolean,
@@ -15,14 +15,12 @@ export interface ResponseData {
 
 // export User;
 
-// Omit<User, 'password'> {
-//   password?: string;
-// }
+type SafeUser = Omit<User, 'password'>;
 
-export { User };
+export { User, SafeUser };
 
 export interface ExtendedRequest extends Request {
-  user?: User;
+  user?: SafeUser;
 }
 
 export type Middleware = (req: ExtendedRequest, res: Response, next?: NextFunction) => void;

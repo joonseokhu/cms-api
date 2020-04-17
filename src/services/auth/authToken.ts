@@ -1,6 +1,6 @@
 import JWT from '@utils/jwt';
 import { getManager } from 'typeorm';
-import { User } from '@models/user.model';
+import $User, { User, SafeUser } from '@models/user.model';
 
 import OK from '@/api/Resolution';
 import NO from '@/api/Rejection';
@@ -21,15 +21,15 @@ export const sign = async (user: User) => {
   return token;
 };
 
-export const verify = async (token: string) => {
-  const db = getManager();
+export const verify = async (token: string): Promise<SafeUser> => {
+  // const db = getManager();
   const payload = await jwt.verify(token);
   const { id } = payload;
-  const user = await db.findOne(User, id);
+  const user = await $User.findById(id, { password: false });
   return user;
 };
 
-const validate = async (token: string): Promise<User> => {
+const validate = async (token: string): Promise<SafeUser> => {
   try {
     if (!token) return null;
     const [authType, authToken] = token.split(' ');
