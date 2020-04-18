@@ -28,7 +28,7 @@ const UserSchema = new Schema<User>({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  status: { type: String, default: UserStatus[UserStatus.registered] },
+  status: { type: String, default: UserStatus.registered },
   tags: [{ type: ID, ref: 'UserTag' }],
   profile: { type: ID, ref: 'UserProfile' },
   registeredAt: { type: Date, default: Date.now() },

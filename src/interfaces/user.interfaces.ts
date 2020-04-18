@@ -1,11 +1,11 @@
 export enum UserStatus {
-  blocked,
-  resigned,
-  draft,
-  registered,
-  normal,
-  admin,
-  root,
+  blocked = 'blocked',
+  resigned = 'resigned',
+  draft = 'draft',
+  registered = 'registered',
+  normal = 'normal',
+  admin = 'admin',
+  root = 'root',
 }
 
 export interface CreateUserProps {

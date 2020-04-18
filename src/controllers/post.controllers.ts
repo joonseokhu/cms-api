@@ -1,40 +1,32 @@
-import { PostStatus, PostType, ContentType } from '@interfaces/post.interfaces';
 import * as postService from '@services/post.services';
-import $Post, { Post } from '@models/post.model';
 import { Controller } from '@/api';
 
 export const createDraftPost = Controller([], async (req, OK, NO) => {
-  const post = await postService.createPost(req.user);
+  const post = await postService.createPost({ user: req.user });
   return OK(post);
 });
 
 export const getOnePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  const post = await postService.getPost({ id }, req.user);
+  const post = await postService.getOnePost({ id, user: req.user });
   return OK(post);
 });
 
 export const getAllPosts = Controller([], async (req, OK, NO) => {
-  const posts = await postService.getPost(req.query, req.user);
+  const { query, user } = req;
+  const posts = await postService.getPostsAndCount({ ...query, user });
   return OK(posts);
 });
 
 export const updatePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  const currentPost = await postService.getPost({ id }, req.user);
-  if ((currentPost as Post).createdBy._id !== req.user._id) {
-    throw NO(403, 'Not your entity(ies)');
-  }
-  const nextPost = await postService.updatePost(id, req.body);
+  const { body: data, user } = req;
+  await postService.updatePost({ id, data, user });
   return OK();
 });
 
 export const deletePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  const currentPost = await postService.getPost({ id }, req.user);
-  if ((currentPost as Post).createdBy._id !== req.user._id) {
-    throw NO(403, 'Not your entity(ies)');
-  }
-  const nextPost = await postService.deletePost(id);
+  await postService.deletePost({ id, user: req.user });
   return OK();
 });

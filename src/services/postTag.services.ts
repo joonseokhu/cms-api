@@ -1,43 +1,56 @@
+import { useQuery, optionalEnum } from '@utils/db';
 import $PostTag, { PostTag } from '@models/postTag.model';
+import { Post } from '@models/post.model';
 import { User, SafeUser } from '@models/user.model';
 
-export const createTag = async (name: string, user: SafeUser): Promise<PostTag> => {
+interface CreatePostTagParams {
+  name: string;
+  description?: string;
+  user: SafeUser;
+}
+export const createTag = async (params: CreatePostTagParams): Promise<PostTag> => {
+  const {
+    name,
+    description = '',
+    user,
+  } = params;
+
   const postTag = await $PostTag.create({
     name,
+    description,
     user: user._id,
   });
 
   return postTag;
 };
 
-// import { optionalFindQuery, AddOption } from '@utils/db';
-// import { getManager } from 'typeorm';
-// import { Post } from '@models/post.model';
-// import { PostTag } from '@models/postTag.model';
-// import { User } from '@/api/interfaces';
-// import { response } from '@/api';
+interface GetPostTagsAndCountParams {
+  name: string;
+  post: number;
+}
+interface GetPostsAndCountResult {
+  entities: PostTag[];
+  count: number;
+}
+interface GetPostTagsAndCount {
+  (params: GetPostTagsAndCountParams): Promise<GetPostsAndCountResult>
+}
+export const getPostTagsAndCount: GetPostTagsAndCount = async params => {
+  const { name, post } = params;
 
-// interface GetTagParams {
-//   id?: number;
-//   name?: string;
-//   post?: number;
-// }
-// export const getTag = async (query: GetTagParams): Promise<Array<PostTag>|PostTag> => {
-//   const db = getManager();
-//   const {
-//     id,
-//     name,
-//     post,
-//   } = query;
+  const findByNameQuery = { name: { $regex: `.*${name}.*` } };
+  const findByPost = { post };
 
-//   if (id) {
-//     const tag = await db.findOne(PostTag, {
-//       where: { id },
-//       relations: ['post'],
-//     });
-//     return tag;
-//   }
-//   const tags = await db.findAndCount(PostTag, {
-//     where:
-//   })
-// }
+  const query = useQuery.optionals({
+    name: name ? findByNameQuery : undefined,
+    post: post ? findByPost : undefined,
+  });
+
+  const entities = await $PostTag.find(query);
+  const count = await $PostTag.estimatedDocumentCount(query);
+
+  return {
+    entities,
+    count,
+  };
+};

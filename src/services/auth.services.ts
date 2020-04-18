@@ -10,7 +10,7 @@ type UserInfo = {
   email?: string,
 };
 
-const optionalFindQuery = (query: any): any => Object
+const optionals = (query: any): any => Object
   .entries(query)
   .reduce((acc, [key, value]) => (
     (value === undefined) ? acc : { ...acc, [key]: value }
@@ -19,7 +19,7 @@ const optionalFindQuery = (query: any): any => Object
 const getUserFromInfo = async (data: UserInfo): Promise<User> => {
   const { user, ...info } = data;
   if (user) return user;
-  const result = await $User.findOne(optionalFindQuery(info));
+  const result = await $User.findOne(optionals(info));
   if (!result) throw response.NO(404, 'No user(s) found');
   return result;
 };

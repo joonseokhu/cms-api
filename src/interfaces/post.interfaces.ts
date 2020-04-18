@@ -1,20 +1,20 @@
 export enum PostStatus {
-  deleted,
-  blocked,
-  draft,
-  secret,
-  public,
+  deleted = 'deleted',
+  blocked = 'blocked',
+  draft = 'draft',
+  secret = 'secret',
+  public = 'public',
 }
 
 export enum PostType {
-  ordinary,
-  notice,
+  ordinary = 'ordinary',
+  notice = 'notice',
 }
 
 export enum ContentType {
-  plainText,
-  markdown,
-  html,
+  plainText = 'plainText',
+  markdown = 'markdown',
+  html = 'html',
 }
 
 export interface CreatePostProps {

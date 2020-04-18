@@ -21,9 +21,9 @@ export interface Post extends Document {
 const PostSchema = new Schema<Post>({
   title: { type: String },
   content: { type: String },
-  status: { type: String, default: PostStatus[PostStatus.draft] },
-  postType: { type: String, default: PostType[PostType.ordinary] },
-  contentType: { type: String, default: ContentType[ContentType.plainText] },
+  status: { type: String, default: PostStatus.draft },
+  postType: { type: String, default: PostType.ordinary },
+  contentType: { type: String, default: ContentType.plainText },
   createdBy: { type: ID, ref: 'User', required: true },
   tags: [{ type: ID, ref: 'PostTag' }],
   createdAt: { type: Date, default: Date.now() },

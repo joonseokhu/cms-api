@@ -5,7 +5,7 @@ import {
   response,
 } from '@/api';
 // import { sign, verify } from '@utils/jwt';
-import { optionalFindQuery } from '@utils/db';
+import { useQuery } from '@utils/db';
 import $User, { User } from '../models/user.model';
 import $UserProfile, { UserProfile } from '../models/userProfile.model';
 
@@ -18,7 +18,7 @@ interface RegisterForm {
 /**
  * @todo 이거 나중에 모듈로 빼자
  */
-// const optionalFindQuery = (query: any): any => Object
+// const optionals = (query: any): any => Object
 //   .entries(query)
 //   .reduce((acc, [key, value]) => (
 //     (value === undefined) ? acc : { ...acc, [key]: value }
@@ -54,7 +54,6 @@ export const createUser = async (data: RegisterForm) => {
 };
 
 export const getUser = async (_id: number, query: any) => {
-  // const db = getManager();
   const {
     email,
     username,
@@ -68,7 +67,7 @@ export const getUser = async (_id: number, query: any) => {
     return user;
   }
 
-  const users = await $User.find(optionalFindQuery({
+  const users = await $User.find(useQuery.optionals({
     email,
     username,
     status,
