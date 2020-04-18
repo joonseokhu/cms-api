@@ -45,8 +45,9 @@ interface GetPostsAndCountParams {
   content?: string;
   postStatus?: PostStatus|string;
   postType?: PostType|string;
-  user?: SafeUser;
+  user?: string;
   tag: PostTag,
+  currentUser?: SafeUser;
 }
 interface GetPostsAndCountResult {
   entities: Post[];
@@ -63,7 +64,7 @@ export const getPostsAndCount: GetPostsAndCount = async params => {
     postType,
     tag,
   } = params;
-  const user = params.user?._id || undefined;
+  const currentUser = params.currentUser?._id || undefined;
 
   const query = useQuery.optionals({
     ...useQuery.findByString(
@@ -74,7 +75,7 @@ export const getPostsAndCount: GetPostsAndCount = async params => {
     postType,
     $or: [
       { postStatus: PostStatus.public },
-      { user },
+      { user: currentUser },
     ],
   });
 

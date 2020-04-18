@@ -13,8 +13,27 @@ export const getOnePost = Controller([], async (req, OK, NO) => {
 });
 
 export const getAllPosts = Controller([], async (req, OK, NO) => {
-  const { query, user } = req;
-  const posts = await postService.getPostsAndCount({ ...query, user });
+  const { user: currentUser } = req;
+  const {
+    title,
+    content,
+    postStatus,
+    postType,
+    user,
+    tag,
+  } = (req.query as any);
+  /**
+   * @todo 쿼리 타입 맞춰줘야함
+   */
+  const posts = await postService.getPostsAndCount({
+    title,
+    content,
+    postStatus,
+    postType,
+    user,
+    tag,
+    currentUser,
+  });
   return OK(posts);
 });
 
