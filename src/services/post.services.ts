@@ -12,7 +12,7 @@ interface CreatePostParams {
 }
 export const createPost = async ({ user }: CreatePostParams): Promise<Post> => {
   const post = await $Post.create({
-    user: user._id,
+    createdBy: user._id,
     title: '',
     content: '',
   });
@@ -24,16 +24,16 @@ interface GetOnePostParams {
   user?: SafeUser;
 }
 export const getOnePost = async (params: GetOnePostParams): Promise<Post> => {
-  const { id: _id } = params;
-  const user = params.user?._id || undefined;
+  const { id } = params;
+  const userId = params.user?.id || undefined;
 
   const post = await $Post.findOne({
-    _id,
+    _id: id,
     $or: [
-      { postStatus: PostStatus[PostStatus.public] },
-      { user },
+      { status: PostStatus.public },
+      { createdBy: userId },
     ],
-  }).populate('user', '-password');
+  }).populate('createdBy', '-password');
 
   if (!post) throw response.NO(404, 'Entity not found');
 
@@ -41,13 +41,13 @@ export const getOnePost = async (params: GetOnePostParams): Promise<Post> => {
 };
 
 interface GetPostsAndCountParams {
-  title?: string;
-  content?: string;
+  findKey: string|string[];
+  findValue: string;
   postStatus?: PostStatus|string;
   postType?: PostType|string;
-  user?: string;
+  createdBy?: string;
   tag: PostTag,
-  currentUser?: SafeUser;
+  user?: SafeUser;
 }
 interface GetPostsAndCountResult {
   entities: Post[];
@@ -58,28 +58,25 @@ interface GetPostsAndCount {
 }
 export const getPostsAndCount: GetPostsAndCount = async params => {
   const {
-    title,
-    content,
+    findKey,
+    findValue,
     postStatus,
     postType,
+    createdBy,
     tag,
   } = params;
-  const currentUser = params.currentUser?._id || undefined;
+  const user = params.user?.id || undefined;
 
   const query = useQuery.optionals({
-    ...useQuery.findByString(
-      { title },
-      { content },
-      { title, content },
-    ),
+    ...useQuery.findByString(findKey, findValue),
     postType,
     $or: [
-      { postStatus: PostStatus.public },
-      { user: currentUser },
+      { status: PostStatus.public },
+      { createdBy: user },
     ],
   });
 
-  const entities = await $Post.find(query).populate('user', '-password');
+  const entities = await $Post.find(query).populate('createdBy', '-password');
 
   const count = await $Post.estimatedDocumentCount(query);
 
@@ -104,7 +101,12 @@ export const updatePost = async (params: UpdatePostInterface): Promise<boolean> 
 
   const post = await getOnePost({ id, user });
   if (!post) throw response.NO(404, 'Entity not found');
-  if (post.createdBy._id !== user?._id) throw response.NO(403, 'Not your entity');
+  console.log({
+    'post.createdBy.id': post.createdBy.id,
+    'post.createdBy._id': post.createdBy._id,
+    'user?.id': user?.id,
+  });
+  if (post.createdBy.id !== user?.id) throw response.NO(403, 'Not your entity');
 
   // 태그가 다 유효한지 확인
   // const tags = data.tags.map()
@@ -117,8 +119,10 @@ export const updatePost = async (params: UpdatePostInterface): Promise<boolean> 
     contentType: optionalEnum<ContentType>(ContentType, data.contentType),
     tags: data.tags,
   }));
-  if (!result.nModified) throw response.NO(500, 'Update failed', result);
-  return true;
+
+  if (!result.ok) throw response.NO(500, 'Update failed', result);
+
+  return !!result.nModified;
 };
 
 interface DeletePostInterface {
@@ -133,7 +137,7 @@ export const deletePost = async (params: DeletePostInterface): Promise<boolean> 
 
   const post = await getOnePost({ id, user });
   if (!post) throw response.NO(404, 'Entity not found');
-  if (post.createdBy._id !== user?._id) throw response.NO(403, 'Not your entity');
+  if (post.createdBy.id !== user?.id) throw response.NO(403, 'Not your entity');
   const result = await $Post.remove({ _id: id });
   if (!result.deletedCount) throw response.NO(500, 'Delete failed', result);
   return true;

@@ -14,6 +14,8 @@ import {
 
 import validate from '@/api/validate';
 
+import authorize from '@/api/authorize';
+
 const response = {
   OK,
   NO,
@@ -24,4 +26,5 @@ export {
   response,
   Controller,
   validate,
+  authorize,
 };

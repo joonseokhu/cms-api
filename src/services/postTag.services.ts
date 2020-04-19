@@ -25,7 +25,8 @@ export const createTag = async (params: CreatePostTagParams): Promise<PostTag> =
 };
 
 interface GetPostTagsAndCountParams {
-  name: string;
+  findKey: string|string[];
+  findValue: string;
   post: number;
 }
 interface GetPostsAndCountResult {
@@ -36,13 +37,12 @@ interface GetPostTagsAndCount {
   (params: GetPostTagsAndCountParams): Promise<GetPostsAndCountResult>
 }
 export const getPostTagsAndCount: GetPostTagsAndCount = async params => {
-  const { name, post } = params;
+  const { findKey, findValue, post } = params;
 
-  const findByNameQuery = { name: { $regex: `.*${name}.*` } };
   const findByPost = { post };
 
   const query = useQuery.optionals({
-    name: name ? findByNameQuery : undefined,
+    ...useQuery.findByString(findKey, findValue),
     post: post ? findByPost : undefined,
   });
 

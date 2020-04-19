@@ -1,5 +1,5 @@
 import * as postService from '@services/post.services';
-import { Controller } from '@/api';
+import { Controller, validate, authorize } from '@/api';
 
 export const createDraftPost = Controller([], async (req, OK, NO) => {
   const post = await postService.createPost({ user: req.user });
@@ -12,27 +12,35 @@ export const getOnePost = Controller([], async (req, OK, NO) => {
   return OK(post);
 });
 
-export const getAllPosts = Controller([], async (req, OK, NO) => {
-  const { user: currentUser } = req;
+export const getAllPosts = Controller([
+  validate(
+    validate.findByString(
+      'title',
+      ['title', 'content'],
+    ),
+  ),
+], async (req, OK, NO) => {
+  console.log({ query: req.query });
+  const { user } = req;
   const {
-    title,
-    content,
+    findKey,
+    findValue,
     postStatus,
     postType,
-    user,
+    createdBy,
     tag,
   } = (req.query as any);
   /**
    * @todo 쿼리 타입 맞춰줘야함
    */
   const posts = await postService.getPostsAndCount({
-    title,
-    content,
+    findKey,
+    findValue,
     postStatus,
     postType,
-    user,
+    createdBy,
     tag,
-    currentUser,
+    user,
   });
   return OK(posts);
 });
@@ -40,8 +48,8 @@ export const getAllPosts = Controller([], async (req, OK, NO) => {
 export const updatePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
   const { body: data, user } = req;
-  await postService.updatePost({ id, data, user });
-  return OK();
+  const result = await postService.updatePost({ id, data, user });
+  return OK(result);
 });
 
 export const deletePost = Controller([], async (req, OK, NO) => {

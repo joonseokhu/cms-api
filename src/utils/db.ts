@@ -20,22 +20,41 @@ export const optionalEnum = <T>(Enum: any, value: string): T => (
   isStringEnum(Enum, value) ? Enum[value] : undefined
 );
 
-const getRegexQuery = (arg: any) => (
-  Object.entries(arg).reduce((acc, [key, value]) => {
-    if (value === undefined) return acc;
-    return {
-      ...acc,
-      [key]: { $regex: `.*${value}.*` },
-    };
-  }, {})
-);
+// const getRegexQuery = (arg: any) => (
+//   Object.entries(arg).reduce((acc, [key, value]) => {
+//     if (value === undefined) return acc;
+//     return {
+//       ...acc,
+//       [key]: { $regex: `.*${value}.*` },
+//     };
+//   }, {})
+// );
 
-const findByString = (...args: any[]) => {
-  const queries = args.map(arg => getRegexQuery(arg));
-  return {
-    $or: queries,
-  };
+// const findByString = (...args: any[]) => {
+//   const queries = args.map(arg => getRegexQuery(arg));
+//   return {
+//     $or: queries,
+//   };
+// };
+
+const findByString = (keys: string|string[], value: string) => {
+  const findKeys = Array.isArray(keys) ? keys : [keys];
+  const resultQueries = findKeys.map(key => {
+    if (!value) return {};
+    const regexString = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return {
+      [key]: { $regex: `.*${regexString}.*` },
+    };
+  });
+  console.log('queries', resultQueries);
+  return { $or: resultQueries };
 };
+
+// findByString({ title, content }, [
+//   ['title'],
+//   ['content'],
+//   ['title', 'content'],
+// ]);
 
 export const useQuery = {
   optionals,
