@@ -20,7 +20,7 @@ export const getAllPosts = Controller([
     ),
   ),
 ], async (req, OK, NO) => {
-  console.log({ query: req.query });
+  // console.log({ query: req.query });
   const { user } = req;
   const {
     findKey,

@@ -12,7 +12,7 @@ export interface Payload {
 
 const jwt = new JWT<Payload>(process.env.JWT_SECRET);
 
-export const sign = async (user: User) => {
+export const sign = async (user: User|SafeUser) => {
   const token = await jwt.sign({
     id: user.id,
   }, {

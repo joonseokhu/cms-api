@@ -14,10 +14,15 @@ const reduce = <I = any>(fn: (acc: any, value: I, index?: number) => any, initia
   )
 );
 
+const sort = <I = any>(fn?: any) => (values: I[]) => (
+  [...values].sort(fn)
+);
+
 export const array = {
   map,
   filter,
   reduce,
+  sort,
 };
 
 export const log = (message: any) => (value: any) => {

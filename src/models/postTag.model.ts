@@ -9,6 +9,7 @@ export interface PostTag extends Document {
   name: string;
   description: string;
   posts: Post[];
+  postsCount: number;
   createdBy: User;
   createdAt: Date,
   updatedAt: Date,
@@ -18,6 +19,7 @@ const PostTagSchema = new Schema<PostTag>({
   name: { type: String, required: true, unique: true },
   description: { type: String },
   posts: [{ type: ID, ref: 'Post' }],
+  postsCount: { type: Number },
   createdBy: { type: ID, ref: 'User', required: true },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },

@@ -19,18 +19,15 @@ export const createPostTag = Controller([
 
 export const getPostTags = Controller([
   validate(
-    validate.query('findKey'),
-    validate.query('findValue'),
+    validate.query('name').optional().isLength({ min: 2 }),
   ),
 ], async (req, OK, NO) => {
   const {
-    findKey,
-    findValue,
+    name,
     post,
   } = (req.query as any);
   const tags = await postTagService.getPostTagsAndCount({
-    findKey,
-    findValue,
+    name,
     post,
   });
   return OK(tags);

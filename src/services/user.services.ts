@@ -6,7 +6,7 @@ import {
 } from '@/api';
 // import { sign, verify } from '@utils/jwt';
 import { useQuery } from '@utils/db';
-import $User, { User } from '../models/user.model';
+import $User, { User, SafeUser } from '../models/user.model';
 import $UserProfile, { UserProfile } from '../models/userProfile.model';
 
 interface RegisterForm {
@@ -24,7 +24,7 @@ interface RegisterForm {
 //     (value === undefined) ? acc : { ...acc, [key]: value }
 //   ), {});
 
-export const createUser = async (data: RegisterForm) => {
+export const createUser = async (data: RegisterForm): Promise<SafeUser> => {
   // const db = getManager();
   const {
     email,
@@ -50,10 +50,10 @@ export const createUser = async (data: RegisterForm) => {
 
   const { password: _, ...safeUser } = user;
 
-  return safeUser;
+  return safeUser as SafeUser;
 };
 
-export const getUser = async (_id: number, query: any) => {
+export const getUser = async (_id: number, query: any): Promise<SafeUser|SafeUser[]> => {
   const {
     email,
     username,
@@ -63,7 +63,7 @@ export const getUser = async (_id: number, query: any) => {
 
   if (_id) {
     const user = await $User.findById(_id);
-    if (!user) return response.NO(404, '찾을 수 없습니다.');
+    if (!user) throw response.NO(404, '찾을 수 없습니다.');
     return user;
   }
 

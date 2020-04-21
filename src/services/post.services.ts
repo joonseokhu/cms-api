@@ -11,6 +11,11 @@ interface CreatePostParams {
   user: SafeUser;
 }
 export const createPost = async ({ user }: CreatePostParams): Promise<Post> => {
+  console.log({
+    createdBy: user._id,
+    title: '',
+    content: '',
+  });
   const post = await $Post.create({
     createdBy: user._id,
     title: '',
@@ -33,7 +38,8 @@ export const getOnePost = async (params: GetOnePostParams): Promise<Post> => {
       { status: PostStatus.public },
       { createdBy: userId },
     ],
-  }).populate('createdBy', '-password');
+  }).populate('createdBy', '-password')
+    .populate('tags');
 
   if (!post) throw response.NO(404, 'Entity not found');
 
@@ -67,18 +73,22 @@ export const getPostsAndCount: GetPostsAndCount = async params => {
   } = params;
   const user = params.user?.id || undefined;
 
-  const query = useQuery.optionals({
-    ...useQuery.findByString(findKey, findValue),
-    postType,
-    $or: [
-      { status: PostStatus.public },
-      { createdBy: user },
+  const query = {
+    $and: [
+      useQuery.findByString(findKey, findValue),
+      useQuery.optionals({ postType }),
+      useQuery.optionals({
+        $or: [
+          { status: PostStatus.public },
+          { createdBy: user },
+        ],
+      }),
     ],
-  });
+  };
 
   const entities = await $Post.find(query).populate('createdBy', '-password');
 
-  const count = await $Post.estimatedDocumentCount(query);
+  const count = await $Post.countDocuments(query);
 
   return {
     entities,

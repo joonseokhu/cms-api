@@ -1,5 +1,7 @@
 import { Controller, validate, authorize } from '@/api';
-import * as user from '../services/user.services';
+import authToken from '@services/auth/authToken';
+import { SafeUser } from '@/api/interfaces';
+import * as userService from '../services/user.services';
 
 export const register = Controller([
   authorize(
@@ -12,8 +14,12 @@ export const register = Controller([
   ),
 ], async (req, OK, NO) => {
   const data = req.body;
-  const result = await user.createUser(data);
-  return OK(result);
+  const user = await userService.createUser(data);
+  const token = await authToken.sign(user as SafeUser);
+  return OK({
+    token,
+    user,
+  });
 });
 
 export const getUsers = Controller([
@@ -22,7 +28,7 @@ export const getUsers = Controller([
   ),
 ], async (req, OK, NO) => {
   const { query } = req;
-  const result = await user.getUser(0, query);
+  const result = await userService.getUser(0, query);
   return OK(result);
 });
 
@@ -33,7 +39,7 @@ export const getUser = Controller([
 ], async (req, OK, NO) => {
   const userID = Number(req.params.id);
   const { query } = req;
-  const result = await user.getUser(userID, query);
+  const result = await userService.getUser(userID, query);
   return OK(result);
 });
 

@@ -20,33 +20,17 @@ export const optionalEnum = <T>(Enum: any, value: string): T => (
   isStringEnum(Enum, value) ? Enum[value] : undefined
 );
 
-// const getRegexQuery = (arg: any) => (
-//   Object.entries(arg).reduce((acc, [key, value]) => {
-//     if (value === undefined) return acc;
-//     return {
-//       ...acc,
-//       [key]: { $regex: `.*${value}.*` },
-//     };
-//   }, {})
-// );
-
-// const findByString = (...args: any[]) => {
-//   const queries = args.map(arg => getRegexQuery(arg));
-//   return {
-//     $or: queries,
-//   };
-// };
-
 const findByString = (keys: string|string[], value: string) => {
   const findKeys = Array.isArray(keys) ? keys : [keys];
+  if (!(findKeys && value)) return {};
   const resultQueries = findKeys.map(key => {
-    if (!value) return {};
     const regexString = value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return {
       [key]: { $regex: `.*${regexString}.*` },
     };
   });
-  console.log('queries', resultQueries);
+  // console.log('queries', resultQueries);
+  // return resultQueries;
   return { $or: resultQueries };
 };
 
@@ -56,7 +40,15 @@ const findByString = (keys: string|string[], value: string) => {
 //   ['title', 'content'],
 // ]);
 
-export const useQuery = {
+const useQuery = {
   optionals,
   findByString,
+};
+
+export {
+  useQuery,
+};
+
+export const buildQuery = () => {
+
 };

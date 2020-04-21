@@ -19,6 +19,7 @@ if (env) {
   }));
 } else {
   // development
+  app.disable('etag');
   app.use(logger('dev'));
   app.use(cors({
     origin: true,
