@@ -5,6 +5,7 @@ import {
   getAllPosts,
   updatePost,
   deletePost,
+  votePost,
 } from '../controllers/post.controllers';
 
 import {
@@ -23,5 +24,8 @@ router.post('/tag', createPostTag);
 router.get('/:id', getOnePost);
 router.put('/:id', updatePost);
 router.delete('/:id', deletePost);
+
+router.post('/:id/vote/:vote', votePost);
+router.delete('/:id/vote/:vote', votePost);
 
 export default router;

@@ -12,7 +12,9 @@ export interface Post extends Document {
   postType: PostType;
   contentType: ContentType;
   tags: PostTag[];
-  createdBy: User,
+  voteUps: User[];
+  voteDowns: User[];
+  createdBy: User;
   createdAt: Date;
   publishedAt: Date;
   updatedAt: Date;
@@ -24,6 +26,8 @@ const PostSchema = new Schema<Post>({
   status: { type: String, default: PostStatus.draft },
   postType: { type: String, default: PostType.ordinary },
   contentType: { type: String, default: ContentType.plainText },
+  voteUps: [{ type: ID, ref: 'User' }],
+  voteDowns: [{ type: ID, ref: 'User' }],
   createdBy: { type: ID, ref: 'User', required: true },
   tags: [{ type: ID, ref: 'PostTag' }],
   createdAt: { type: Date, default: Date.now() },

@@ -45,6 +45,26 @@ export const getAllPosts = Controller([
   return OK(posts);
 });
 
+export const votePost = Controller([
+  authorize(
+    authorize.hasAuth(true),
+  ),
+  validate(
+    validate.param('id').isMongoId(),
+    validate.param('vote').isIn(['up', 'down']),
+  ),
+], async (req, OK, NO) => {
+  const { id } = req.params;
+  const isVoteUp = req.params.vote === 'up';
+  const isIncrementing = req.method.toLowerCase() === 'post';
+  const { user } = req;
+
+  const result = await postService.votePost({
+    id, user, isVoteUp, isIncrementing,
+  });
+  return OK(result);
+});
+
 export const updatePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
   const { body: data, user } = req;

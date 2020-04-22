@@ -1,4 +1,15 @@
-// import { User } from '@models/user.model';
+import { Schema, Document } from 'mongoose';
+
+type IDLike<T> = Schema.Types.ObjectId|string|T;
+export const isEqualID = <T>(left: IDLike<T>, right: IDLike<T>, debug?: boolean): boolean => {
+  const result = left.toString() === right.toString();
+  if (debug) {
+    console.log('left', left.toString(), left);
+    console.log('right', right.toString(), right);
+    console.log(result);
+  }
+  return result;
+};
 
 const optionals = <T>(query: any): Partial<T> => Object
   .entries(query)
