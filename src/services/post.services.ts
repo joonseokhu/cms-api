@@ -71,6 +71,7 @@ export const getPostsAndCount: GetPostsAndCount = async params => {
     createdBy,
     tag,
   } = params;
+
   const user = params.user?.id || undefined;
 
   const query = {
