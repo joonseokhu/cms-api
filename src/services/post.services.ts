@@ -103,7 +103,7 @@ interface UpdatePostInterface {
   data: UpdateData;
   user?: SafeUser;
 }
-export const updatePost = async (params: UpdatePostInterface): Promise<boolean> => {
+export const updatePost = async (params: UpdatePostInterface): Promise<Post> => {
   const {
     id,
     user,
@@ -118,7 +118,7 @@ export const updatePost = async (params: UpdatePostInterface): Promise<boolean> 
   // 태그가 다 유효한지 확인
   // const tags = data.tags.map()
 
-  const result = await $Post.updateOne({ _id: id }, useQuery.optionals({
+  const result = await $Post.findOneAndUpdate({ _id: id }, useQuery.optionals({
     title: data.title,
     content: data.content,
     status: optionalEnum<PostStatus>(PostStatus, data.status),
@@ -127,9 +127,9 @@ export const updatePost = async (params: UpdatePostInterface): Promise<boolean> 
     tags: data.tags,
   }));
 
-  if (!result.ok) throw response.NO(500, 'Update failed', result);
+  if (!result) throw response.NO(500, 'Update failed', result);
 
-  return !!result.nModified;
+  return result;
 };
 
 // voteUps
@@ -211,7 +211,7 @@ export const deletePost = async (params: DeletePostInterface): Promise<boolean> 
   const post = await getOnePost({ id, user });
   if (!post) throw response.NO(404, 'Entity not found');
   if (!isEqualID(post.createdBy.id, user?.id)) throw response.NO(403, 'Not your entity');
-  const result = await $Post.remove({ _id: id });
+  const result = await $Post.deleteOne({ _id: id });
   if (!result.deletedCount) throw response.NO(500, 'Delete failed', result);
   return true;
 };

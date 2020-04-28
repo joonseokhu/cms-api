@@ -1,24 +1,19 @@
 import { User } from '@models/user.model';
+import { Post } from '@models/post.model';
+import { Entity, EntitySchema } from '@/models/entity.model';
 import { Schema, Document, model } from 'mongoose';
 
 const ID = Schema.Types.ObjectId;
 
-export interface Comment extends Document {
+export interface Comment extends Entity {
   content: string;
-  voteUps: User[];
-  voteDowns: User[];
-  createdBy: User;
-  createdAt: Date;
-  updatedAt: Date;
+  post: Post;
 }
 
 const CommentSchema = new Schema<Comment>({
+  ...EntitySchema,
   content: { type: String },
-  voteUps: [{ type: ID, ref: 'User' }],
-  voteDowns: [{ type: ID, ref: 'User' }],
-  createdBy: { type: ID, ref: 'User', required: true },
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
+  post: { type: ID, ref: 'Post' },
 });
 
 export default model<Comment>('Comment', CommentSchema);

@@ -11,6 +11,7 @@ export default async (app: Express) => {
   const connection = await mongoose.connect(`${MD_HOST}/${MD_NAME}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
     useCreateIndex: true,
   });
   // app.locals.db = connection;

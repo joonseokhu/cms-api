@@ -17,7 +17,10 @@ export interface ResponseData {
 
 type SafeUser = Omit<User, 'password'>;
 
-export { User, SafeUser };
+type USER = User|SafeUser;
+
+export { User, SafeUser, USER };
+
 
 export interface ExtendedRequest extends Request {
   user?: SafeUser;
