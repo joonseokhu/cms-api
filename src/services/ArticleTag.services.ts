@@ -1,7 +1,7 @@
 import { useQuery, optionalEnum } from '@utils/db';
-import $PostTag, { PostTag } from '@models/postTag.model';
-import { Post } from '@models/post.model';
-import { User, SafeUser } from '@models/user.model';
+import $PostTag, { PostTag } from '@/models/ArticleTag.model';
+import { Post } from '@/components/Article/Article.model';
+import { User, SafeUser } from '@/components/User/User.model';
 
 interface CreatePostTagParams {
   name: string;

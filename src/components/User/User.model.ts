@@ -3,10 +3,10 @@
 //   Entity, Column, ManyToMany, OneToOne, JoinColumn, OneToMany,
 // } from 'typeorm';
 
-import { UserProfile } from '@models/userProfile.model';
-import { UserTag } from '@models/userTag.model';
+import { UserProfile } from '@/models/UserProfile.model';
+import { UserTag } from '@/models/UserTag.model';
 import { Schema, Document, model } from 'mongoose';
-import { UserStatus } from '../interfaces/user.interfaces';
+import { UserStatus } from '../../interfaces/user.interfaces';
 
 const ID = Schema.Types.ObjectId;
 

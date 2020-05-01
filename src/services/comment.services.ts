@@ -1,7 +1,7 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
-import $Post, { Post } from '@models/post.model';
-import $Comment, { Comment } from '@models/Comment.model';
-import { vote, isOwner } from '@/services/contentEntity.services';
+import $Post, { Post } from '@/components/Article/Article.model';
+import $Comment, { Comment } from '@/components/Comment/Comment.model';
+import { vote, isOwner } from '@/services/UserContent.services';
 import { User, SafeUser, USER } from '@/api/interfaces';
 import { response } from '@/api';
 import {
@@ -27,6 +27,9 @@ export const createComment: CreateComment = async params => {
 interface GetCommentsParams {
   user: USER;
   post: string;
+  desc: boolean;
+  page: number;
+  limit: number;
 }
 
 interface GetCommentsAndCountResult {
@@ -36,9 +39,12 @@ interface GetCommentsAndCountResult {
 
 type GetComments = (params: GetCommentsParams) => Promise<GetCommentsAndCountResult>;
 
-export const getComments: GetComments = async params => {
+export const getCommentsAndCount: GetComments = async params => {
   const {
     post,
+    desc,
+    page,
+    limit,
   } = params;
 
   const query = useQuery.optionals({
@@ -47,7 +53,9 @@ export const getComments: GetComments = async params => {
 
   const entities = await $Comment
     .find(query)
-    .populate('createdBy', '-password');
+    .populate('createdBy', '-password')
+    .limit(limit)
+    .skip(limit * (page - 1));
   const count = await $Comment.countDocuments(query);
 
   return {
@@ -111,6 +119,7 @@ export const voteComment: VoteComment = async params => {
   const {
     user, id, voteType, voteMethod,
   } = params;
+
   const comment = await getOneComment({ id });
   const nextPayload = vote<Comment>({
     entity: comment,

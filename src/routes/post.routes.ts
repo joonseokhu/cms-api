@@ -6,17 +6,17 @@ import {
   updatePost,
   deletePost,
   votePost,
-} from '../controllers/post.controllers';
+} from '@components/Article/Article.controllers';
 
 import {
   createPostTag,
   getPostTags,
-} from '../controllers/postTag.controllers';
+} from '@controllers/ArticleTag.controllers';
 
 import {
   createComment,
   getAllComments,
-} from '../controllers/comment.controllers';
+} from '@/components/Comment/Comment.controllers';
 
 const router = Router();
 

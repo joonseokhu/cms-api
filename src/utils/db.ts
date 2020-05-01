@@ -45,19 +45,57 @@ const findByString = (keys: string|string[], value: string) => {
   return { $or: resultQueries };
 };
 
-// findByString({ title, content }, [
-//   ['title'],
-//   ['content'],
-//   ['title', 'content'],
-// ]);
+export interface Pagination {
+  page: number;
+  limit: number;
+  sort: string;
+  desc: boolean;
+}
+const paginationController = (max = 20) => (req): Pagination => {
+  const page = (value => {
+    const ret = value ? parseInt(value, 10) : 1;
+    if (Number.isNaN(ret)) throw new Error('Invalid query: page');
+    return ret;
+  })(req.query.page);
+
+  const limit = (value => {
+    const ret = value ? parseInt(value, 10) : max;
+    if (Number.isNaN(ret)) throw new Error('Invalid query: limit');
+    if (ret > max) throw new Error('Too big limit');
+    return ret;
+  })(req.query.limit);
+
+  const desc = (value => {
+    const ret = !!value;
+    return ret;
+  })(req.query.desc);
+
+  const sort = (value => {
+    const ret = String(value) || '_id';
+    return ret;
+  })(req.query.sort);
+
+  return {
+    page,
+    limit,
+    sort,
+    desc,
+  };
+};
+
+const useController = {
+  pagination: paginationController,
+};
 
 const useQuery = {
   optionals,
   findByString,
+  // pagination,
 };
 
 export {
   useQuery,
+  useController,
 };
 
 export const buildQuery = () => {

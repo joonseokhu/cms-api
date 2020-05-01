@@ -20,6 +20,7 @@
       "@routes/*": ["./routes/*"],
       "@services/*": ["./services/*"],
       "@utils/*": ["./utils/*"],
+      "@components/*": ["./components/*"],
     },
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types"]

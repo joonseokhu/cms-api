@@ -1,7 +1,7 @@
-import * as commentServices from '@services/comment.services';
+import * as commentServices from '@/services/Comment.services';
 import { Controller, validate, authorize } from '@/api';
-import { vote, isOwner } from '@/services/contentEntity.services';
-import { Comment } from '@models/Comment.model';
+import { vote, isOwner } from '@/services/UserContent.services';
+import { Comment } from '@/components/Comment/Comment.model';
 
 export const createComment = Controller([
   validate(
@@ -20,12 +20,19 @@ export const createComment = Controller([
 
 export const getAllComments = Controller([
   validate.param('postID').isMongoId(),
+  validate.pagination(),
 ], async (req, OK, NO) => {
-  const result = await commentServices.getComments({
-    user: req.user,
-    post: req.params.postID,
-  });
-  return OK(result);
+  // const result = await commentServices.getCommentsAndCount({
+  //   // user: req.user,
+  //   // pagination: pagination()(req),
+  //   // post: req.params.postID,
+  //   // desc: req.query.desc,
+  //   // page: req.query.page,
+  //   // limit: req.query.limit,
+  // });
+  // return OK(result);
+  console.log(req.query);
+  return OK(req.query);
 });
 
 export const updateComment = Controller([
@@ -61,7 +68,13 @@ export const deleteComment = Controller([
   return OK(result);
 });
 
-export const voteComment = Controller([], async (req, OK, NO) => {
+export const voteComment = Controller([
+  authorize(),
+  validate(
+    validate.param('id').isMongoId(),
+    validate.param('vote').isIn(['up', 'down']),
+  ),
+], async (req, OK, NO) => {
   const result = await commentServices.voteComment({
     user: req.user,
     id: req.params.id,

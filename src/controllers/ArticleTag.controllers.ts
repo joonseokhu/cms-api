@@ -1,4 +1,4 @@
-import * as postTagService from '@services/postTag.services';
+import * as ArticleTagService from '@/services/ArticleTag.services';
 import { Controller, validate, authorize } from '@/api';
 
 export const createPostTag = Controller([
@@ -9,7 +9,7 @@ export const createPostTag = Controller([
     validate.body('name').isLength({ min: 2 }),
   ),
 ], async (req, OK, NO) => {
-  const tag = await postTagService.createTag({
+  const tag = await ArticleTagService.createTag({
     name: req.body.name,
     description: req.body.description,
     user: req.user,
@@ -26,7 +26,7 @@ export const getPostTags = Controller([
     name,
     post,
   } = (req.query as any);
-  const tags = await postTagService.getPostTagsAndCount({
+  const tags = await ArticleTagService.getPostTagsAndCount({
     name,
     post,
   });

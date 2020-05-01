@@ -6,8 +6,8 @@ import {
 } from '@/api';
 // import { sign, verify } from '@utils/jwt';
 import { useQuery } from '@utils/db';
-import $User, { User, SafeUser } from '../models/user.model';
-import $UserProfile, { UserProfile } from '../models/userProfile.model';
+import $User, { User, SafeUser } from '@components/User/User.model';
+import $UserProfile, { UserProfile } from '../models/UserProfile.model';
 
 interface RegisterForm {
   email: string,

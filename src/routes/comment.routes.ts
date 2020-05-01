@@ -4,7 +4,7 @@ import {
   updateComment,
   deleteComment,
   voteComment,
-} from '../controllers/comment.controllers';
+} from '../components/Comment/Comment.controllers';
 
 const router = Router();
 

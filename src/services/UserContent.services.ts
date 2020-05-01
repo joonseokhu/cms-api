@@ -1,6 +1,6 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
 
-import { Entity } from '@models/entity.model';
+import { Entity } from '@/models/UserContent.model';
 import { USER } from '@/api/interfaces';
 import { response } from '@/api';
 

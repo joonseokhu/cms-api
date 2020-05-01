@@ -1,5 +1,5 @@
 import { Document, Schema } from 'mongoose';
-import { User } from '@models/user.model';
+import { User } from '@/components/User/User.model';
 
 const ID = Schema.Types.ObjectId;
 

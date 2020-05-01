@@ -3,7 +3,7 @@ import {
   register,
   getUser,
   getUsers,
-} from '../controllers/user.controllers';
+} from '../components/User/User.controllers';
 
 const router = Router();
 

@@ -1,19 +1,20 @@
-import * as postService from '@services/post.services';
+import * as articleService from '@/services/Article.services';
 import { Controller, validate, authorize } from '@/api';
 
 export const createDraftPost = Controller([], async (req, OK, NO) => {
-  const post = await postService.createPost({ user: req.user });
+  const post = await articleService.createPost({ user: req.user });
   return OK(post);
 });
 
 export const getOnePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  const post = await postService.getOnePost({ id, user: req.user });
+  const post = await articleService.getOnePost({ id, user: req.user });
   return OK(post);
 });
 
 export const getAllPosts = Controller([
   validate(
+    validate.pagination(),
     validate.findByString(
       'title',
       ['title', 'content'],
@@ -29,11 +30,14 @@ export const getAllPosts = Controller([
     postType,
     createdBy,
     tag,
+    desc,
+    page,
+    limit,
   } = (req.query as any);
   /**
    * @todo 쿼리 타입 맞춰줘야함
    */
-  const posts = await postService.getPostsAndCount({
+  const posts = await articleService.getPostsAndCount({
     findKey,
     findValue,
     postStatus,
@@ -41,6 +45,9 @@ export const getAllPosts = Controller([
     createdBy,
     tag,
     user,
+    desc,
+    page,
+    limit,
   });
   return OK(posts);
 });
@@ -54,13 +61,11 @@ export const votePost = Controller([
     validate.param('vote').isIn(['up', 'down']),
   ),
 ], async (req, OK, NO) => {
-  const { id } = req.params;
-  const isVoteUp = req.params.vote === 'up';
-  const isIncrementing = req.method.toLowerCase() === 'post';
-  const { user } = req;
-
-  const result = await postService.votePost({
-    id, user, isVoteUp, isIncrementing,
+  const result = await articleService.votePost({
+    user: req.user,
+    id: req.params.id,
+    voteType: req.params.vote,
+    voteMethod: req.method,
   });
   return OK(result);
 });
@@ -68,12 +73,12 @@ export const votePost = Controller([
 export const updatePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
   const { body: data, user } = req;
-  const result = await postService.updatePost({ id, data, user });
+  const result = await articleService.updatePost({ id, data, user });
   return OK(result);
 });
 
 export const deletePost = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  await postService.deletePost({ id, user: req.user });
+  await articleService.deletePost({ id, user: req.user });
   return OK();
 });

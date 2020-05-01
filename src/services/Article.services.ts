@@ -1,7 +1,8 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
-import $Post, { Post } from '@models/post.model';
-import { PostTag } from '@models/postTag.model';
-import { User, SafeUser } from '@/api/interfaces';
+import $Post, { Post } from '@/components/Article/Article.model';
+import { PostTag } from '@/models/ArticleTag.model';
+import { vote } from '@/services/UserContent.services';
+import { User, SafeUser, USER } from '@/api/interfaces';
 import { response } from '@/api';
 import {
   PostStatus, PostType, ContentType, CreatePostProps,
@@ -52,8 +53,11 @@ interface GetPostsAndCountParams {
   postStatus?: PostStatus|string;
   postType?: PostType|string;
   createdBy?: string;
-  tag: PostTag,
+  tag: PostTag;
   user?: SafeUser;
+  desc: boolean;
+  page: number;
+  limit: number;
 }
 interface GetPostsAndCountResult {
   entities: Post[];
@@ -70,6 +74,9 @@ export const getPostsAndCount: GetPostsAndCount = async params => {
     postType,
     createdBy,
     tag,
+    desc,
+    page,
+    limit,
   } = params;
 
   const user = params.user?.id || undefined;
@@ -87,7 +94,11 @@ export const getPostsAndCount: GetPostsAndCount = async params => {
     ],
   };
 
-  const entities = await $Post.find(query).populate('createdBy', '-password');
+  const entities = await $Post
+    .find(query)
+    .populate('createdBy', '-password')
+    .limit(limit)
+    .skip(limit * (page - 1));
 
   const count = await $Post.countDocuments(query);
 
@@ -136,62 +147,23 @@ export const updatePost = async (params: UpdatePostInterface): Promise<Post> => 
 // voteDowns
 interface VotePostParams {
   id: string;
-  user: User|SafeUser;
-  isVoteUp: boolean;
-  isIncrementing: boolean;
+  user: USER;
+  voteType: string;
+  voteMethod: string;
 }
 export const votePost = async (params: VotePostParams): Promise<boolean> => {
   const {
-    id, user, isVoteUp, isIncrementing,
+    id, user, voteType, voteMethod,
   } = params;
 
-  if (!user) {
-    throw response.NO(403, 'Only Users can vote');
-  }
-  const userId = user?.id;
-  const post = await getOnePost({ id, user });
-  const { voteUps, voteDowns } = post;
-  const hasVotedUp = voteUps.includes(userId);
-  const hasVotedDown = voteDowns.includes(userId);
-
-  if (isEqualID(post.createdBy.id, user.id)) {
-    // 스스로에게 추천/비추천 하려 할때
-    throw response.NO(403, 'Cannot vote oneself');
-  }
-
-  const nextVote = (() => {
-    // 추천을 취소할 때
-    if (hasVotedUp && isVoteUp && !isIncrementing) {
-      return {
-        voteUps: voteUps.filter(vote => !isEqualID(vote, userId)),
-      };
-    }
-
-    // 비추천을 취소할때
-    if (hasVotedDown && !isVoteUp && !isIncrementing) {
-      return {
-        voteDowns: voteDowns.filter(vote => !isEqualID(vote, userId)),
-      };
-    }
-
-    // 새로 추천/비추천 할때
-    if (!(hasVotedUp || hasVotedDown) && isIncrementing) {
-      const key = isVoteUp ? 'voteUps' : 'voteDowns';
-      return {
-        [key]: post[key].concat(userId),
-      };
-    }
-
-    // 그 외 경우는 던짐
-    throw response.NO(403, 'Invalid vote', {
-      hasVotedUp,
-      hasVotedDown,
-      isVoteUp,
-      isIncrementing,
-    });
-  })();
-
-  const result = await $Post.updateOne({ _id: id }, nextVote);
+  const post = await getOnePost({ id });
+  const nextPayload = vote<Post>({
+    entity: post,
+    user,
+    voteType,
+    voteMethod,
+  });
+  const result = await $Post.updateOne({ _id: id }, nextPayload);
 
   if (!result.ok) throw response.NO(500, 'Update failed', result);
 
