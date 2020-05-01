@@ -1,5 +1,5 @@
 import { useQuery, optionalEnum } from '@utils/db';
-import $PostTag, { PostTag } from '@/models/ArticleTag.model';
+import $PostTag, { PostTag } from '@/components/Tag/ArticleTag.model';
 import { Post } from '@/components/Article/Article.model';
 import { User, SafeUser } from '@/components/User/User.model';
 

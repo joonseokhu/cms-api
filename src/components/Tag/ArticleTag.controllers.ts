@@ -1,4 +1,4 @@
-import * as ArticleTagService from '@/services/ArticleTag.services';
+import * as ArticleTagService from '@/components/Article/ArticleTag.services';
 import { Controller, validate, authorize } from '@/api';
 
 export const createPostTag = Controller([

@@ -7,7 +7,7 @@ import {
 // import { sign, verify } from '@utils/jwt';
 import { useQuery } from '@utils/db';
 import $User, { User, SafeUser } from '@components/User/User.model';
-import $UserProfile, { UserProfile } from '../models/UserProfile.model';
+import $UserProfile, { UserProfile } from './UserProfile.model';
 
 interface RegisterForm {
   email: string,

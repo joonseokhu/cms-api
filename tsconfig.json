@@ -13,7 +13,6 @@
     "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
       "@controllers/*": ["./controllers/*"],
       "@interfaces/*": ["./interfaces/*"],
       "@models/*": ["./models/*"],
@@ -21,6 +20,7 @@
       "@services/*": ["./services/*"],
       "@utils/*": ["./utils/*"],
       "@components/*": ["./components/*"],
+      "@/*": ["./*"],
     },
     "esModuleInterop": true,
     "typeRoots": ["./node_modules/@types"]

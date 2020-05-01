@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import authToken from '@services/auth/authToken';
+import authToken from '@/components/User/authToken';
 import {
   ResponseData, Middleware, MainService, Controller,
 } from '@/api/interfaces';

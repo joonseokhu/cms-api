@@ -2,7 +2,7 @@ import { Request } from 'express';
 import NO from '@/api/Rejection';
 import { Middleware, User, SafeUser } from '@/api/interfaces';
 import { respond } from '@/api/Controller';
-import { UserStatus } from '../interfaces/user.interfaces';
+import { UserStatus } from '../components/User/User.interfaces';
 
 interface Authorizer {
   (user: SafeUser): null|string|string[];

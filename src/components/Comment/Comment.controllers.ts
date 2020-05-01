@@ -1,6 +1,6 @@
-import * as commentServices from '@/services/Comment.services';
+import * as commentServices from '@/components/Comment/Comment.services';
 import { Controller, validate, authorize } from '@/api';
-import { vote, isOwner } from '@/services/UserContent.services';
+import { vote, isOwner } from '@/components/UserContent/UserContent.services';
 import { Comment } from '@/components/Comment/Comment.model';
 
 export const createComment = Controller([

@@ -1,12 +1,12 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
 import $Post, { Post } from '@/components/Article/Article.model';
 import $Comment, { Comment } from '@/components/Comment/Comment.model';
-import { vote, isOwner } from '@/services/UserContent.services';
+import { vote, isOwner } from '@/components/UserContent/UserContent.services';
 import { User, SafeUser, USER } from '@/api/interfaces';
 import { response } from '@/api';
 import {
   PostStatus, PostType, ContentType, CreatePostProps,
-} from '../interfaces/post.interfaces';
+} from '../Article/Article.interfaces';
 
 interface CreateCommentParams {
   content: string;

@@ -11,7 +11,7 @@ import {
 import {
   createPostTag,
   getPostTags,
-} from '@controllers/ArticleTag.controllers';
+} from '@/components/Tag/ArticleTag.controllers';
 
 import {
   createComment,

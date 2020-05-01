@@ -1,12 +1,12 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
 import $Post, { Post } from '@/components/Article/Article.model';
-import { PostTag } from '@/models/ArticleTag.model';
-import { vote } from '@/services/UserContent.services';
+import { PostTag } from '@/components/Tag/ArticleTag.model';
+import { vote } from '@/components/UserContent/UserContent.services';
 import { User, SafeUser, USER } from '@/api/interfaces';
 import { response } from '@/api';
 import {
   PostStatus, PostType, ContentType, CreatePostProps,
-} from '../interfaces/post.interfaces';
+} from './Article.interfaces';
 
 interface CreatePostParams {
   user: SafeUser;

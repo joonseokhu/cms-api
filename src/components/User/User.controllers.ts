@@ -1,7 +1,7 @@
 import { Controller, validate, authorize } from '@/api';
-import authToken from '@services/auth/authToken';
+import authToken from '@/components/User/authToken';
 import { SafeUser } from '@/api/interfaces';
-import * as userService from '../../services/User.services';
+import * as userService from './User.services';
 
 export const register = Controller([
   authorize(

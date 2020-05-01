@@ -1,5 +1,5 @@
-import { checkUserPassword } from '@services/auth.services';
-import authToken from '@services/auth/authToken';
+import { checkUserPassword } from '@/components/User/auth.services';
+import authToken from '@/components/User/authToken';
 import { Controller } from '@/api';
 
 export const login = Controller([], async (req, OK, NO) => {

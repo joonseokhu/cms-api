@@ -3,7 +3,7 @@ import hpp from 'hpp';
 import helmet from 'helmet';
 import cors from 'cors';
 import logger from 'morgan';
-import api, { settlement } from '@routes/index.ts';
+import api, { settlement } from '@/api/api.routes';
 import graphql from '@/graphql';
 
 const app = express();
