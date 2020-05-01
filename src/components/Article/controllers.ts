@@ -1,4 +1,4 @@
-import * as articleService from '@/components/Article/Article.services';
+import * as articleService from '@/components/Article/services';
 import { Controller, validate, authorize } from '@/api';
 
 export const createDraftPost = Controller([], async (req, OK, NO) => {

@@ -1,7 +1,7 @@
-import { User } from '@/components/User/User.model';
+import { User } from '@/components/User/model';
 import { Schema, Document, model } from 'mongoose';
-import { PostStatus, PostType, ContentType } from '@/components/Article/Article.interfaces';
-import { Post } from '@/components/Article/Article.model';
+import { PostStatus, PostType, ContentType } from '@/components/Article/interfaces';
+import { Post } from '@/components/Article/model';
 
 const ID = Schema.Types.ObjectId;
 

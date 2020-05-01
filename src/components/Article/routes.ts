@@ -6,7 +6,7 @@ import {
   updatePost,
   deletePost,
   votePost,
-} from '@components/Article/Article.controllers';
+} from '@/components/Article/controllers';
 
 import {
   createPostTag,
@@ -16,7 +16,7 @@ import {
 import {
   createComment,
   getAllComments,
-} from '@/components/Comment/Comment.controllers';
+} from '@/components/Comment/controllers';
 
 const router = Router();
 

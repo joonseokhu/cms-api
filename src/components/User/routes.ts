@@ -3,7 +3,7 @@ import {
   register,
   getUser,
   getUsers,
-} from './User.controllers';
+} from './controllers';
 
 const router = Router();
 

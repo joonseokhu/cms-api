@@ -6,7 +6,7 @@
 import { UserProfile } from '@/components/User/UserProfile.model';
 import { UserTag } from '@/components/Tag/UserTag.model';
 import { Schema, Document, model } from 'mongoose';
-import { UserStatus } from './User.interfaces';
+import { UserStatus } from './interfaces';
 
 const ID = Schema.Types.ObjectId;
 
@@ -37,51 +37,3 @@ const UserSchema = new Schema<User>({
 });
 
 export default model<User>('User', UserSchema);
-
-// @Entity()
-// export class User {
-//   @PrimaryGeneratedColumn()
-//   id: number;
-
-//   @Column({
-//     default: UserStatus.draft,
-//   })
-//   status: UserStatus;
-
-//   @Column()
-//   email: string;
-
-//   @Column({
-//     select: false,
-//   })
-//   password: string;
-
-//   @Column({
-//     unique: true,
-//   })
-//   username: string;
-
-//   @CreateDateColumn()
-//   registeredAt: Date;
-
-//   @UpdateDateColumn()
-//   updatedAt: Date;
-
-//   @Column({
-//     type: 'datetime',
-//     default: () => 'CURRENT_TIMESTAMP',
-//   })
-//   passwordUpdatedAt: Date;
-
-//   @Column({
-//     nullable: true,
-//   })
-//   resignedAt: Date;
-
-//   @OneToOne(type => UserProfile)
-//   @JoinColumn()
-//   profile: UserProfile;
-
-//   @ManyToMany(type => UserTag, userTag => userTag.users)
-//   tags: UserTag[];
-// }

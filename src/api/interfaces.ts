@@ -4,7 +4,7 @@ import {
   Request, Response, NextFunction, ErrorRequestHandler, Router,
 } from 'express';
 
-import { User } from '@/components/User/User.model';
+import { User } from '@/components/User/model';
 
 export interface ResponseData {
   status: boolean,

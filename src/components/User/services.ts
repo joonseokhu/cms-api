@@ -6,7 +6,7 @@ import {
 } from '@/api';
 // import { sign, verify } from '@utils/jwt';
 import { useQuery } from '@utils/db';
-import $User, { User, SafeUser } from '@components/User/User.model';
+import $User, { User, SafeUser } from '@/components/User/model';
 import $UserProfile, { UserProfile } from './UserProfile.model';
 
 interface RegisterForm {

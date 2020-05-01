@@ -1,6 +1,6 @@
 import { getManager, getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
-import $User, { User } from '@/components/User/User.model';
+import $User, { User } from '@/components/User/model';
 import { response, Controller } from '@/api';
 
 type UserInfo = {
