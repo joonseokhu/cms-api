@@ -5,12 +5,7 @@ import {
 
 import { checkTokenAndSetUser } from '@/api/checkAuthHeaders';
 
-import OK from '@/api/Resolution';
-import NO from '@/api/Rejection';
-
-export const respond = (res: Response, data: ResponseData) => res
-  .status(data.statusCode)
-  .json(data);
+import { OK, NO, respond } from '@/api/response';
 
 export const controller: Controller = (pre, main) => {
   const mainServiceWrapper: Middleware = async (req, res, next) => {

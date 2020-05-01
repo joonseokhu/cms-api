@@ -1,18 +1,16 @@
 import { Router } from 'express';
-import post from '@/components/Article/routes';
+import article from '@/components/Article/routes';
 import user from '@/components/User/routes';
 import auth from '@/components/User/auth.routes';
 import comment from '@/components/Comment/routes';
 import settlement from '@/api/settlement.routes';
-// import tag from './tag';
 
 const router = Router();
 
-router.use('/post', post);
+router.use('/article', article);
 router.use('/comment', comment);
 router.use('/user', user);
 router.use('/auth', auth);
-// router.use('/tag', tag);
 
 router.use(settlement);
 

@@ -1,15 +1,9 @@
 import { Response, Request } from 'express';
 import authToken from '@/components/User/authToken';
+import { respond } from '@/api/response';
 import {
   ResponseData, Middleware, MainService, Controller,
 } from '@/api/interfaces';
-
-import OK from '@/api/Resolution';
-import NO from '@/api/Rejection';
-
-const respond = (res: Response, data: ResponseData) => res
-  .status(data.statusCode)
-  .json(data);
 
 /**
  * @todo 토큰체크 통과 못한 이유에 따라 다른 행동이 나타나도록. 특히 리프레싱 관련

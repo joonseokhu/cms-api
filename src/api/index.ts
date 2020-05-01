@@ -4,24 +4,19 @@
 
 // import { ResponseData, Middleware, MainService } from '@/api/interfaces';
 
-import OK from '@/api/Resolution';
-import NO from '@/api/Rejection';
+import response, { OK, NO, respond } from '@/api/response';
 
 import {
   controller as Controller,
-  respond,
 } from '@/api/Controller';
 
 import validate from '@/api/validate';
 
 import authorize from '@/api/authorize';
 
-const response = {
+export {
   OK,
   NO,
-};
-
-export {
   respond,
   response,
   Controller,

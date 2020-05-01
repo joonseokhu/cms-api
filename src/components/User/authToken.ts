@@ -2,8 +2,8 @@ import JWT from '@utils/jwt';
 import { getManager } from 'typeorm';
 import $User, { User, SafeUser } from '@/components/User/model';
 
-import OK from '@/api/Resolution';
-import NO from '@/api/Rejection';
+import OK from '@/api/response/Resolution';
+import { NO } from '@/api/response';
 
 // import checkPassword from './checkPassword';
 export interface Payload {

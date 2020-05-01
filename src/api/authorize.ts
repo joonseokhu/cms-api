@@ -1,7 +1,5 @@
-import { Request } from 'express';
-import NO from '@/api/Rejection';
+import { NO, respond } from '@/api/response';
 import { Middleware, User, SafeUser } from '@/api/interfaces';
-import { respond } from '@/api/Controller';
 import { UserStatus } from '../components/User/interfaces';
 
 interface Authorizer {

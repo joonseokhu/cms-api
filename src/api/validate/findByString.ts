@@ -1,9 +1,6 @@
 import L from 'lodash/fp';
 import { array as curryArray, log } from '@utils/curry';
 import * as expressValidator from 'express-validator';
-import NO from '@/api/Rejection';
-import { Middleware } from '@/api/interfaces';
-import { respond } from '@/api/Controller';
 
 const OptionalToArray = <T>(value: T|T[]): T[] => (
   Array.isArray(value) ? value : [value]
