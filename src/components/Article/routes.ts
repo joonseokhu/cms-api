@@ -1,17 +1,15 @@
 import { Router } from 'express';
 import {
-  createDraftPost,
-  getOnePost,
-  getAllPosts,
-  updatePost,
-  deletePost,
-  votePost,
+  createDraftArticle,
+  getOneArticle,
+  getAllArticles,
+  updateArticle,
+  deleteArticle,
+  voteArticle,
+  createArticleTag,
+  getArticleTags,
+  getTagsOfArticle,
 } from '@/components/Article/controllers';
-
-import {
-  createPostTag,
-  getPostTags,
-} from '@/components/Tag/ArticleTag.controllers';
 
 import {
   createComment,
@@ -20,21 +18,24 @@ import {
 
 const router = Router();
 
-// router.post('/id', publishPost);
-router.post('/', createDraftPost);
-router.get('/', getAllPosts);
-router.get('/tag', getPostTags);
-router.post('/tag', createPostTag);
+// router.post('/id', publishArticle);
+router.post('/', createDraftArticle);
+router.get('/', getAllArticles);
 
-router.get('/:id', getOnePost);
-router.put('/:id', updatePost);
-router.delete('/:id', deletePost);
+router.get('/tag', getArticleTags);
+router.post('/tag', createArticleTag);
+router.get('/:id/tag', getTagsOfArticle);
 
-router.post('/:id/vote/:vote', votePost);
-router.delete('/:id/vote/:vote', votePost);
+router.get('/:id', getOneArticle);
+router.put('/:id', updateArticle);
+router.delete('/:id', deleteArticle);
 
-router.post('/:postID/comment', createComment);
-router.get('/:postID/comment', getAllComments);
+
+router.post('/:id/vote/:vote', voteArticle);
+router.delete('/:id/vote/:vote', voteArticle);
+
+router.post('/:articleID/comment', createComment);
+router.get('/:articleID/comment', getAllComments);
 
 // router.delete('/comment/:id', createComment);
 // router.update('/comment/:id', createComment);

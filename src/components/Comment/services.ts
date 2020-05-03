@@ -1,17 +1,18 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
-import $Post, { Post } from '@/components/Article/model';
+import $Article, { Article } from '@/components/Article/model';
 import $Comment, { Comment } from '@/components/Comment/model';
 import { vote, isOwner } from '@/components/UserContent/services';
 import { User, SafeUser, USER } from '@/api/interfaces';
 import { response } from '@/api';
+import { WithPagination } from '@/api/hooks';
 import {
-  PostStatus, PostType, ContentType, CreatePostProps,
+  ArticleStatus, ArticleType, ContentType, CreateArticleProps,
 } from '../Article/interfaces';
 
 interface CreateCommentParams {
   content: string;
   user: USER;
-  post: string;
+  article: string;
 }
 
 type CreateComment = (params: CreateCommentParams) => Promise<Comment>;
@@ -19,49 +20,42 @@ export const createComment: CreateComment = async params => {
   const comment = await $Comment.create({
     content: params.content,
     createdBy: params.user.id,
-    post: params.post,
+    article: params.article,
   });
   return comment;
 };
 
 interface GetCommentsParams {
   user: USER;
-  post: string;
-  desc: boolean;
-  page: number;
-  limit: number;
+  article: string;
+  pagination: WithPagination;
 }
 
-interface GetCommentsAndCountResult {
-  entities: Comment[];
-  count: number;
-}
-
-type GetComments = (params: GetCommentsParams) => Promise<GetCommentsAndCountResult>;
+type GetComments = (params: GetCommentsParams) => Promise<[Comment[], number]>;
 
 export const getCommentsAndCount: GetComments = async params => {
   const {
-    post,
-    desc,
-    page,
-    limit,
+    article,
+    pagination,
   } = params;
 
   const query = useQuery.optionals({
-    post,
+    article,
   });
 
-  const entities = await $Comment
-    .find(query)
-    .populate('createdBy', '-password')
-    .limit(limit)
-    .skip(limit * (page - 1));
+  console.log({ query });
+
+  const comments = await pagination(
+    $Comment
+      .find(query)
+      .populate('createdBy', '-password'),
+  );
   const count = await $Comment.countDocuments(query);
 
-  return {
-    entities,
+  return [
+    comments,
     count,
-  };
+  ];
 };
 
 interface GetOneCommentParams {

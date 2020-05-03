@@ -14,6 +14,8 @@ import validate from '@/api/validate';
 
 import authorize from '@/api/authorize';
 
+import useControl from '@/api/hooks';
+
 export {
   OK,
   NO,
@@ -22,4 +24,5 @@ export {
   Controller,
   validate,
   authorize,
+  useControl,
 };

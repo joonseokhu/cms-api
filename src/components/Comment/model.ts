@@ -1,5 +1,5 @@
 import { User } from '@/components/User/model';
-import { Post } from '@/components/Article/model';
+import { Article } from '@/components/Article/model';
 import { Entity, EntitySchema } from '@/components/UserContent/model';
 import { Schema, Document, model } from 'mongoose';
 
@@ -7,13 +7,13 @@ const ID = Schema.Types.ObjectId;
 
 export interface Comment extends Entity {
   content: string;
-  post: Post;
+  article: Article;
 }
 
 const CommentSchema = new Schema<Comment>({
   ...EntitySchema,
   content: { type: String },
-  post: { type: ID, ref: 'Post' },
+  article: { type: ID, ref: 'Article' },
 });
 
 export default model<Comment>('Comment', CommentSchema);

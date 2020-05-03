@@ -1,139 +1,134 @@
 import { useQuery, optionalEnum, isEqualID } from '@utils/db';
-import $Post, { Post } from '@/components/Article/model';
-import { PostTag } from '@/components/Tag/ArticleTag.model';
-import { vote } from '@/components/UserContent/services';
+import $Article, { Article, $ArticleTag } from '@components/Article/model';
+import { Tag } from '@components/Tag/model';
+import { vote } from '@components/UserContent/services';
 import { User, SafeUser, USER } from '@/api/interfaces';
 import { response } from '@/api';
+import { WithPagination } from '@/api/hooks';
 import {
-  PostStatus, PostType, ContentType, CreatePostProps,
+  ArticleStatus, ArticleType, ContentType, CreateArticleProps,
 } from './interfaces';
 
-interface CreatePostParams {
+interface CreateArticleParams {
   user: SafeUser;
 }
-export const createPost = async ({ user }: CreatePostParams): Promise<Post> => {
+export const createArticle = async ({ user }: CreateArticleParams): Promise<Article> => {
   console.log({
     createdBy: user._id,
     title: '',
     content: '',
   });
-  const post = await $Post.create({
+  const article = await $Article.create({
     createdBy: user._id,
     title: '',
     content: '',
   });
-  return post;
+  return article;
 };
 
-interface GetOnePostParams {
+interface GetOneArticleParams {
   id: string;
   user?: SafeUser;
 }
-export const getOnePost = async (params: GetOnePostParams): Promise<Post> => {
+export const getOneArticle = async (params: GetOneArticleParams): Promise<Article> => {
   const { id } = params;
   const userId = params.user?.id || undefined;
 
-  const post = await $Post.findOne({
+  const article = await $Article.findOne({
     _id: id,
     $or: [
-      { status: PostStatus.public },
+      { status: ArticleStatus.public },
       { createdBy: userId },
     ],
   }).populate('createdBy', '-password')
     .populate('tags');
 
-  if (!post) throw response.NO(404, 'Entity not found');
+  if (!article) throw response.NO(404, 'Entity not found');
 
-  return post;
+  return article;
 };
 
-interface GetPostsAndCountParams {
+interface GetArticlesAndCountParams {
   findKey: string|string[];
   findValue: string;
-  postStatus?: PostStatus|string;
-  postType?: PostType|string;
+  articleStatus?: ArticleStatus|string;
+  articleType?: ArticleType|string;
   createdBy?: string;
-  tag: PostTag;
+  tag: string;
   user?: SafeUser;
-  desc: boolean;
-  page: number;
-  limit: number;
+  pagination: WithPagination;
 }
-interface GetPostsAndCountResult {
-  entities: Post[];
-  count: number;
+
+interface GetArticlesAndCount {
+  (params: GetArticlesAndCountParams): Promise<[Article[], number]>
 }
-interface GetPostsAndCount {
-  (params: GetPostsAndCountParams): Promise<GetPostsAndCountResult>
-}
-export const getPostsAndCount: GetPostsAndCount = async params => {
+export const getArticlesAndCount: GetArticlesAndCount = async params => {
   const {
     findKey,
     findValue,
-    postStatus,
-    postType,
+    articleStatus,
+    articleType,
     createdBy,
     tag,
-    desc,
-    page,
-    limit,
+    pagination,
   } = params;
+
+  const tagQuery = await $ArticleTag.getQueryToGetEntitiesOfTag(tag);
 
   const user = params.user?.id || undefined;
 
   const query = {
     $and: [
+      tagQuery,
       useQuery.findByString(findKey, findValue),
-      useQuery.optionals({ postType }),
+      useQuery.optionals({ articleType }),
       useQuery.optionals({
         $or: [
-          { status: PostStatus.public },
+          { status: ArticleStatus.public },
           { createdBy: user },
         ],
       }),
     ],
   };
 
-  const entities = await $Post
+  const entities = await pagination($Article
     .find(query)
-    .populate('createdBy', '-password')
-    .limit(limit)
-    .skip(limit * (page - 1));
+    .populate('createdBy', '-password'));
 
-  const count = await $Post.countDocuments(query);
+  const count = await $Article.countDocuments(query);
 
-  return {
+  return [
     entities,
     count,
-  };
+  ];
 };
 
-type UpdateData = Omit<Post, 'createdBy'|'createdAt'|'publishedAt'|'updatedAt'>;
-interface UpdatePostInterface {
+type UpdateData = Omit<Article, 'createdBy'|'createdAt'|'publishedAt'|'updatedAt'>;
+interface UpdateArticleInterface {
   id: string;
   data: UpdateData;
   user?: SafeUser;
 }
-export const updatePost = async (params: UpdatePostInterface): Promise<Post> => {
+export const updateArticle = async (params: UpdateArticleInterface): Promise<Article> => {
   const {
     id,
     user,
     data,
   } = params;
 
-  const post = await getOnePost({ id, user });
-  if (!post) throw response.NO(404, 'Entity not found');
+  const article = await getOneArticle({ id, user });
+  if (!article) throw response.NO(404, 'Entity not found');
 
-  if (!isEqualID(post.createdBy?.id, user?.id, true)) throw response.NO(403, 'Not your entity');
+  if (!isEqualID(article.createdBy?.id, user?.id, true)) throw response.NO(403, 'Not your entity');
 
   // 태그가 다 유효한지 확인
   // const tags = data.tags.map()
 
-  const result = await $Post.findOneAndUpdate({ _id: id }, useQuery.optionals({
+  const result = await $Article.findOneAndUpdate({ _id: id }, useQuery.optionals({
     title: data.title,
     content: data.content,
-    status: optionalEnum<PostStatus>(PostStatus, data.status),
-    postType: optionalEnum<PostType>(PostType, data.postType),
+    status: optionalEnum<ArticleStatus>(ArticleStatus, data.status),
+    articleType: optionalEnum<ArticleType>(ArticleType, data.articleType),
     contentType: optionalEnum<ContentType>(ContentType, data.contentType),
     tags: data.tags,
   }));
@@ -145,45 +140,45 @@ export const updatePost = async (params: UpdatePostInterface): Promise<Post> => 
 
 // voteUps
 // voteDowns
-interface VotePostParams {
+interface VoteArticleParams {
   id: string;
   user: USER;
   voteType: string;
   voteMethod: string;
 }
-export const votePost = async (params: VotePostParams): Promise<boolean> => {
+export const voteArticle = async (params: VoteArticleParams): Promise<boolean> => {
   const {
     id, user, voteType, voteMethod,
   } = params;
 
-  const post = await getOnePost({ id });
-  const nextPayload = vote<Post>({
-    entity: post,
+  const article = await getOneArticle({ id });
+  const nextPayload = vote<Article>({
+    entity: article,
     user,
     voteType,
     voteMethod,
   });
-  const result = await $Post.updateOne({ _id: id }, nextPayload);
+  const result = await $Article.updateOne({ _id: id }, nextPayload);
 
   if (!result.ok) throw response.NO(500, 'Update failed', result);
 
   return !!result.nModified;
 };
 
-interface DeletePostInterface {
+interface DeleteArticleInterface {
   id: string;
   user?: SafeUser;
 }
-export const deletePost = async (params: DeletePostInterface): Promise<boolean> => {
+export const deleteArticle = async (params: DeleteArticleInterface): Promise<boolean> => {
   const {
     id,
     user,
   } = params;
 
-  const post = await getOnePost({ id, user });
-  if (!post) throw response.NO(404, 'Entity not found');
-  if (!isEqualID(post.createdBy.id, user?.id)) throw response.NO(403, 'Not your entity');
-  const result = await $Post.deleteOne({ _id: id });
+  const article = await getOneArticle({ id, user });
+  if (!article) throw response.NO(404, 'Entity not found');
+  if (!isEqualID(article.createdBy.id, user?.id)) throw response.NO(403, 'Not your entity');
+  const result = await $Article.deleteOne({ _id: id });
   if (!result.deletedCount) throw response.NO(500, 'Delete failed', result);
   return true;
 };

@@ -1,17 +1,22 @@
 import * as commentServices from '@/components/Comment/services';
-import { Controller, validate, authorize } from '@/api';
+import {
+  Controller, validate, authorize, useControl,
+} from '@/api';
+import {
+
+} from '@/api/hooks';
 import { vote, isOwner } from '@/components/UserContent/services';
 import { Comment } from '@/components/Comment/model';
 
 export const createComment = Controller([
   validate(
-    validate.param('postID').isMongoId(),
+    validate.param('articleID').isMongoId(),
     validate.body('content').isLength({ min: 2, max: 1400 }),
   ),
 ], async (req, OK, NO) => {
   const comment = await commentServices.createComment({
     content: req.body.content,
-    post: req.params.postID,
+    article: req.params.articleID,
     user: req.user,
   });
 
@@ -19,20 +24,19 @@ export const createComment = Controller([
 });
 
 export const getAllComments = Controller([
-  validate.param('postID').isMongoId(),
+  validate.param('articleID').isMongoId(),
   validate.pagination(),
 ], async (req, OK, NO) => {
-  // const result = await commentServices.getCommentsAndCount({
-  //   // user: req.user,
-  //   // pagination: pagination()(req),
-  //   // post: req.params.postID,
-  //   // desc: req.query.desc,
-  //   // page: req.query.page,
-  //   // limit: req.query.limit,
-  // });
-  // return OK(result);
-  console.log(req.query);
-  return OK(req.query);
+  const pagination = useControl.pagination(req);
+  const [entities, count] = await commentServices.getCommentsAndCount({
+    user: req.user,
+    pagination,
+    article: req.params.articleID,
+  });
+  return OK({
+    entities,
+    count,
+  });
 });
 
 export const updateComment = Controller([

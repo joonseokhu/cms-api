@@ -1,4 +1,4 @@
-export enum PostStatus {
+export enum ArticleStatus {
   deleted = 'deleted',
   blocked = 'blocked',
   draft = 'draft',
@@ -6,7 +6,7 @@ export enum PostStatus {
   public = 'public',
 }
 
-export enum PostType {
+export enum ArticleType {
   ordinary = 'ordinary',
   notice = 'notice',
 }
@@ -17,12 +17,12 @@ export enum ContentType {
   html = 'html',
 }
 
-export interface CreatePostProps {
+export interface CreateArticleProps {
   id: number,
   title: string,
   content: string,
-  postStatus: PostStatus,
-  postType: PostType,
+  articleStatus: ArticleStatus,
+  articleType: ArticleType,
   contentType: ContentType,
   tags: string[],
 }

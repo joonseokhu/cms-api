@@ -6,8 +6,8 @@
   "scripts": {
     "lint": "npx eslint ./src/*.ts ./src/**/*.ts",
     "ts-server": "npx ts-node -r tsconfig-paths/register --files ./src/server.ts",
-    "serve": "npx nodemon --exec \"npm run ts-server\"",
-    "dev": "npx nodemon --exec \"npm run lint && npm run ts-server\""
+    "dev": "npx nodemon --exec \"npm run ts-server\"",
+    "dev:lint": "npx nodemon --exec \"npm run lint && npm run ts-server\""
   },
   "author": "Joonseok Hu",
   "license": "UNLICENSED",

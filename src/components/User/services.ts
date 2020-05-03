@@ -15,15 +15,6 @@ interface RegisterForm {
   password: string,
 }
 
-/**
- * @todo 이거 나중에 모듈로 빼자
- */
-// const optionals = (query: any): any => Object
-//   .entries(query)
-//   .reduce((acc, [key, value]) => (
-//     (value === undefined) ? acc : { ...acc, [key]: value }
-//   ), {});
-
 export const createUser = async (data: RegisterForm): Promise<SafeUser> => {
   // const db = getManager();
   const {

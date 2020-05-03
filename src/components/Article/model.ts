@@ -1,30 +1,39 @@
 import { User } from '@/components/User/model';
 import { Schema, Document, model } from 'mongoose';
-import { PostStatus, PostType, ContentType } from '@/components/Article/interfaces';
-import { PostTag } from '@/components/Tag/ArticleTag.model';
+import { ArticleStatus, ArticleType, ContentType } from '@/components/Article/interfaces';
+// import { ArticleTag } from '@/components/Tag/ArticleTag.model';
+import { Tag } from '@components/Tag/model';
+import TagModel from '@components/Tag/services';
 import { Entity, EntitySchema } from '@/components/UserContent/model';
 
 const ID = Schema.Types.ObjectId;
 
-export interface Post extends Entity {
+export interface Article extends Entity {
   title: string;
   content: string;
-  status: PostStatus;
-  postType: PostType;
+  status: ArticleStatus;
+  articleType: ArticleType;
   contentType: ContentType;
-  tags: PostTag[];
+  tags: Tag<Article>[];
   publishedAt: Date;
 }
 
-const PostSchema = new Schema<Post>({
+const ArticleSchema = new Schema<Article>({
   ...EntitySchema,
   title: { type: String },
   content: { type: String },
-  status: { type: String, default: PostStatus.draft },
-  postType: { type: String, default: PostType.ordinary },
+  status: { type: String, default: ArticleStatus.draft },
+  articleType: { type: String, default: ArticleType.ordinary },
   contentType: { type: String, default: ContentType.plainText },
-  tags: [{ type: ID, ref: 'PostTag' }],
+  tags: [{ type: ID, ref: 'ArticleTag' }],
   publishedAt: { type: Date },
 });
 
-export default model<Post>('Post', PostSchema);
+export const $Article = model<Article>('Article', ArticleSchema);
+
+export const $ArticleTag = new TagModel('ArticleTag', {
+  name: 'Article',
+  model: $Article,
+});
+
+export default $Article;

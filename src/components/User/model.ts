@@ -4,7 +4,8 @@
 // } from 'typeorm';
 
 import { UserProfile } from '@/components/User/UserProfile.model';
-import { UserTag } from '@/components/Tag/UserTag.model';
+import { Tag } from '@components/Tag/model';
+import TagModel from '@components/Tag/services';
 import { Schema, Document, model } from 'mongoose';
 import { UserStatus } from './interfaces';
 
@@ -15,7 +16,7 @@ export interface User extends Document {
   email: string;
   password: string;
   status: UserStatus;
-  tags: UserTag[];
+  tags: Tag<User>[];
   profile: UserProfile;
   registeredAt: Date;
   passwordUpdatedAt: Date;
@@ -36,4 +37,11 @@ const UserSchema = new Schema<User>({
   resignedAt: { type: Date },
 });
 
-export default model<User>('User', UserSchema);
+export const $User = model<User>('User', UserSchema);
+
+export const $UserTag = new TagModel('UserTag', {
+  name: 'User',
+  model: $User,
+});
+
+export default $User;

@@ -1,18 +1,21 @@
 import * as articleService from '@/components/Article/services';
-import { Controller, validate, authorize } from '@/api';
+import { $ArticleTag } from '@components/Article/model';
+import {
+  Controller, validate, authorize, useControl,
+} from '@/api';
 
-export const createDraftPost = Controller([], async (req, OK, NO) => {
-  const post = await articleService.createPost({ user: req.user });
-  return OK(post);
+export const createDraftArticle = Controller([], async (req, OK, NO) => {
+  const article = await articleService.createArticle({ user: req.user });
+  return OK(article);
 });
 
-export const getOnePost = Controller([], async (req, OK, NO) => {
+export const getOneArticle = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  const post = await articleService.getOnePost({ id, user: req.user });
-  return OK(post);
+  const article = await articleService.getOneArticle({ id, user: req.user });
+  return OK(article);
 });
 
-export const getAllPosts = Controller([
+export const getAllArticles = Controller([
   validate(
     validate.pagination(),
     validate.findByString(
@@ -21,38 +24,32 @@ export const getAllPosts = Controller([
     ),
   ),
 ], async (req, OK, NO) => {
-  // console.log({ query: req.query });
   const { user } = req;
   const {
     findKey,
     findValue,
-    postStatus,
-    postType,
+    articleStatus,
+    articleType,
     createdBy,
     tag,
-    desc,
-    page,
-    limit,
   } = (req.query as any);
   /**
    * @todo 쿼리 타입 맞춰줘야함
    */
-  const posts = await articleService.getPostsAndCount({
+  const [entities, count] = await articleService.getArticlesAndCount({
     findKey,
     findValue,
-    postStatus,
-    postType,
+    articleStatus,
+    articleType,
     createdBy,
     tag,
     user,
-    desc,
-    page,
-    limit,
+    pagination: useControl.pagination(req),
   });
-  return OK(posts);
+  return OK({ entities, count });
 });
 
-export const votePost = Controller([
+export const voteArticle = Controller([
   authorize(
     authorize.hasAuth(true),
   ),
@@ -61,7 +58,7 @@ export const votePost = Controller([
     validate.param('vote').isIn(['up', 'down']),
   ),
 ], async (req, OK, NO) => {
-  const result = await articleService.votePost({
+  const result = await articleService.voteArticle({
     user: req.user,
     id: req.params.id,
     voteType: req.params.vote,
@@ -70,15 +67,57 @@ export const votePost = Controller([
   return OK(result);
 });
 
-export const updatePost = Controller([], async (req, OK, NO) => {
+export const updateArticle = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
   const { body: data, user } = req;
-  const result = await articleService.updatePost({ id, data, user });
+  const result = await articleService.updateArticle({ id, data, user });
   return OK(result);
 });
 
-export const deletePost = Controller([], async (req, OK, NO) => {
+export const deleteArticle = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  await articleService.deletePost({ id, user: req.user });
+  await articleService.deleteArticle({ id, user: req.user });
   return OK();
+});
+
+export const createArticleTag = Controller([
+  authorize(
+    authorize.hasAuth(true),
+  ),
+  validate(
+    validate.body('name').isLength({ min: 2 }),
+  ),
+], async (req, OK, NO) => {
+  const tag = await $ArticleTag.createTag({
+    name: req.body.name,
+    description: req.body.description,
+    user: req.user,
+  });
+  return OK(tag);
+});
+
+export const getArticleTags = Controller([
+  validate(
+    validate.query('name').optional().isLength({ min: 2 }),
+  ),
+], async (req, OK, NO) => {
+  const [entities, count] = await $ArticleTag.getAllTags(req.query.name as string);
+
+  return OK({
+    entities,
+    count,
+  });
+});
+
+export const getTagsOfArticle = Controller([
+  validate(
+    validate.param('id').optional().isMongoId(),
+  ),
+], async (req, OK, NO) => {
+  const [entities, count] = await $ArticleTag.getTagsOfEntity(req.params.id);
+
+  return OK({
+    entities,
+    count,
+  });
 });
