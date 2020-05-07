@@ -1,12 +1,32 @@
 import { Schema, Document } from 'mongoose';
 
+export const stringifyID = (value: any) => {
+  const result = (() => {
+    if (!value || typeof value === 'string') {
+      // console.log('1');
+      return value;
+    }
+    if (value instanceof Schema.Types.ObjectId) {
+      // console.log('2');
+      return value.toString();
+    }
+    if (typeof value.id === 'string') {
+      // console.log('3');
+      return value.id;
+    }
+    return value.id.toString();
+  })();
+  // console.log({ value, result });
+  return result;
+};
+
 type IDLike<T> = Schema.Types.ObjectId|string|T;
 export const isEqualID = <T>(left: IDLike<T>, right: IDLike<T>, debug?: boolean): boolean => {
   const result = left.toString() === right.toString();
   if (debug) {
-    console.log('left', left.toString(), left);
-    console.log('right', right.toString(), right);
-    console.log(result);
+    // console.log('left', left.toString(), left);
+    // console.log('right', right.toString(), right);
+    // console.log(result);
   }
   return result;
 };

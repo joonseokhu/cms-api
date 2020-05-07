@@ -8,7 +8,7 @@ import {
   voteArticle,
   createArticleTag,
   getArticleTags,
-  getTagsOfArticle,
+  // getTagsOfArticle,
 } from '@/components/Article/controllers';
 
 import {
@@ -24,7 +24,7 @@ router.get('/', getAllArticles);
 
 router.get('/tag', getArticleTags);
 router.post('/tag', createArticleTag);
-router.get('/:id/tag', getTagsOfArticle);
+// router.get('/:id/tag', getTagsOfArticle);
 
 router.get('/:id', getOneArticle);
 router.put('/:id', updateArticle);

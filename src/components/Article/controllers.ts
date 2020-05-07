@@ -22,8 +22,10 @@ export const getAllArticles = Controller([
       'title',
       ['title', 'content'],
     ),
+    validate.query('tag').optional().isMongoId(),
   ),
 ], async (req, OK, NO) => {
+  console.log('req.query', req.query);
   const { user } = req;
   const {
     findKey,
@@ -109,15 +111,15 @@ export const getArticleTags = Controller([
   });
 });
 
-export const getTagsOfArticle = Controller([
-  validate(
-    validate.param('id').optional().isMongoId(),
-  ),
-], async (req, OK, NO) => {
-  const [entities, count] = await $ArticleTag.getTagsOfEntity(req.params.id);
+// export const getTagsOfArticle = Controller([
+//   validate(
+//     validate.param('id').optional().isMongoId(),
+//   ),
+// ], async (req, OK, NO) => {
+//   const [entities, count] = await $ArticleTag.getTagsOfEntity(req.params.id);
 
-  return OK({
-    entities,
-    count,
-  });
-});
+//   return OK({
+//     entities,
+//     count,
+//   });
+// });

@@ -73,13 +73,13 @@ export const getArticlesAndCount: GetArticlesAndCount = async params => {
     pagination,
   } = params;
 
-  const tagQuery = await $ArticleTag.getQueryToGetEntitiesOfTag(tag);
+  // const tagQuery = await $ArticleTag.getQueryToGetEntitiesOfTag(tag);
 
   const user = params.user?.id || undefined;
 
   const query = {
     $and: [
-      tagQuery,
+      useQuery.optionals({ tags: tag }),
       useQuery.findByString(findKey, findValue),
       useQuery.optionals({ articleType }),
       useQuery.optionals({
@@ -94,6 +94,7 @@ export const getArticlesAndCount: GetArticlesAndCount = async params => {
   const entities = await pagination($Article
     .find(query)
     .populate('createdBy', '-password'));
+    // .populate('tags')
 
   const count = await $Article.countDocuments(query);
 
@@ -130,7 +131,7 @@ export const updateArticle = async (params: UpdateArticleInterface): Promise<Art
     status: optionalEnum<ArticleStatus>(ArticleStatus, data.status),
     articleType: optionalEnum<ArticleType>(ArticleType, data.articleType),
     contentType: optionalEnum<ContentType>(ContentType, data.contentType),
-    tags: data.tags,
+    tags: data.tags.filter(Boolean),
   }));
 
   if (!result) throw response.NO(500, 'Update failed', result);
@@ -152,12 +153,14 @@ export const voteArticle = async (params: VoteArticleParams): Promise<boolean> =
   } = params;
 
   const article = await getOneArticle({ id });
+
   const nextPayload = vote<Article>({
     entity: article,
     user,
     voteType,
     voteMethod,
   });
+
   const result = await $Article.updateOne({ _id: id }, nextPayload);
 
   if (!result.ok) throw response.NO(500, 'Update failed', result);
