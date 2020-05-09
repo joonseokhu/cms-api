@@ -19,8 +19,6 @@ const createTagSchema = <T>(name: string, entityName: string) => {
       type: String, required: true, unique: true, index: true,
     },
     description: { type: String },
-    // entities: [{ type: ID, entityName }],
-    // count: { type: Number, default: 0 },
     createdBy: { type: ID, ref: 'User', required: true },
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() },

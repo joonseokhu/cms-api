@@ -124,12 +124,15 @@ export const updateArticle = async (params: UpdateArticleInterface): Promise<Art
   // 태그가 다 유효한지 확인
   // const tags = data.tags.map()
 
-  // const tags = await $ArticleTag.registerTags(
-  //   data.tags.filter(Boolean) as any,
-  //   user,
-  // );
+  const tags = await $ArticleTag.registerTags(
+    data.tags.filter(Boolean) as any,
+    user,
+  );
 
-  // console.log(tags);
+  // console.log(tags.map(tag => ({
+  //   id: tag.id,
+  //   name: tag.name,
+  // })));
 
   const result = await $Article.findOneAndUpdate({ _id: id }, useQuery.optionals({
     title: data.title,
@@ -137,7 +140,7 @@ export const updateArticle = async (params: UpdateArticleInterface): Promise<Art
     status: optionalEnum<ArticleStatus>(ArticleStatus, data.status),
     articleType: optionalEnum<ArticleType>(ArticleType, data.articleType),
     contentType: optionalEnum<ContentType>(ContentType, data.contentType),
-    tags: data.tags, // tags.filter(Boolean),
+    tags: data.tags, // : data.tags, // tags.filter(Boolean),
   }));
 
   if (!result) throw response.NO(500, 'Update failed', result);

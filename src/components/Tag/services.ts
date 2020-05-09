@@ -50,7 +50,6 @@ class TagService<T extends Document> {
 
     return Promise.all([
       ...registeredTags,
-      undefined,
       ...results,
     ]);
   };
