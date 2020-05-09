@@ -25,7 +25,7 @@ const ArticleSchema = new Schema<Article>({
   status: { type: String, default: ArticleStatus.draft },
   articleType: { type: String, default: ArticleType.ordinary },
   contentType: { type: String, default: ContentType.plainText },
-  tags: [{ type: ID, ref: 'ArticleTag' }],
+  tags: [{ type: String, ref: 'ArticleTag' }],
   publishedAt: { type: Date },
 });
 

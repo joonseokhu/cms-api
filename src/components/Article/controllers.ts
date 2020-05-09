@@ -22,7 +22,7 @@ export const getAllArticles = Controller([
       'title',
       ['title', 'content'],
     ),
-    validate.query('tag').optional().isMongoId(),
+    validate.query('tag').optional().isLength({ min: 2 }),
   ),
 ], async (req, OK, NO) => {
   console.log('req.query', req.query);

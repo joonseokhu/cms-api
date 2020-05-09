@@ -40,8 +40,7 @@ export const getOneArticle = async (params: GetOneArticleParams): Promise<Articl
       { status: ArticleStatus.public },
       { createdBy: userId },
     ],
-  }).populate('createdBy', '-password')
-    .populate('tags');
+  }).populate('createdBy', '-password');
 
   if (!article) throw response.NO(404, 'Entity not found');
 
@@ -125,13 +124,20 @@ export const updateArticle = async (params: UpdateArticleInterface): Promise<Art
   // 태그가 다 유효한지 확인
   // const tags = data.tags.map()
 
+  // const tags = await $ArticleTag.registerTags(
+  //   data.tags.filter(Boolean) as any,
+  //   user,
+  // );
+
+  // console.log(tags);
+
   const result = await $Article.findOneAndUpdate({ _id: id }, useQuery.optionals({
     title: data.title,
     content: data.content,
     status: optionalEnum<ArticleStatus>(ArticleStatus, data.status),
     articleType: optionalEnum<ArticleType>(ArticleType, data.articleType),
     contentType: optionalEnum<ContentType>(ContentType, data.contentType),
-    tags: data.tags.filter(Boolean),
+    tags: data.tags, // tags.filter(Boolean),
   }));
 
   if (!result) throw response.NO(500, 'Update failed', result);
