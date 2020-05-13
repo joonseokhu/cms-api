@@ -4,8 +4,6 @@ import { Schema, Document, model } from 'mongoose';
 export interface Tag<T> extends Document {
   name: string;
   description: string;
-  // entities: T[];
-  // count: number;
   createdBy: USER;
   createdAt: Date;
   updatedAt: Date;
