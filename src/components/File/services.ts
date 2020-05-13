@@ -5,6 +5,8 @@ import multerS3 from 'multer-s3';
 import createFileSchema, { File } from './model';
 import { UploadResult } from './interfaces';
 
+// const file = new File('File', 'multertest');
+
 class FileService {
   Model: Model<File>;
 
