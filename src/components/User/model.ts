@@ -39,9 +39,10 @@ const UserSchema = new Schema<User>({
 
 export const $User = model<User>('User', UserSchema);
 
-export const $UserTag = new TagModel('UserTag', {
-  name: 'User',
-  model: $User,
+export const $UserTag = new TagModel({
+  name: 'UserTag',
+  entityName: 'User',
+  entityModel: $User,
 });
 
 export default $User;

@@ -12,27 +12,29 @@ export enum FileType {
   others = 'others',
 }
 
-export interface File extends Document {
+export interface File<T> extends Document {
   key: string;
   fileName: string;
   url: string;
   type: FileType;
   ext: string;
   size: number;
+  entity: T;
   createdBy: User;
   createdAt: Date;
 }
 
-export default name => {
-  const FileSchema = new Schema<File>({
+export default <T>(name: string, entityName: string) => {
+  const FileSchema = new Schema<File<T>>({
     key: { type: String, unique: true, index: true },
     fileName: { type: String },
     url: { type: String, unique: true },
     type: { type: String },
     ext: { type: String },
     size: { type: Number },
+    entity: { type: ID, ref: entityName, required: true },
     createdBy: { type: ID, ref: 'User', required: true },
     createdAt: { type: Date, default: Date.now() },
   });
-  return model<File>(name, FileSchema);
+  return model<File<T>>(name, FileSchema);
 };

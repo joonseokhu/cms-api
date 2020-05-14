@@ -7,8 +7,16 @@ import { UploadResult } from './interfaces';
 
 // const file = new File('File', 'multertest');
 
-class FileService {
-  Model: Model<File>;
+type ConstructorParams<T extends Document> = {
+  name: string,
+  entityName: string,
+  entityModel: Model<T>,
+  bucketName: string,
+};
+class FileService<T extends Document> {
+  Model: Model<File<T>>;
+
+  EntityModel: Model<T>;
 
   bucket: string;
 
@@ -16,8 +24,8 @@ class FileService {
 
   upload: any;
 
-  constructor(name: string, bucket: string) {
-    this.bucket = bucket;
+  constructor(params: ConstructorParams<T>) {
+    this.bucket = params.bucketName;
     this.s3 = new aws.S3({
       region: 'ap-northeast-2',
     });
@@ -38,7 +46,8 @@ class FileService {
         },
       }),
     });
-    this.Model = createFileSchema(name);
+    this.Model = createFileSchema<T>(params.name, params.entityName);
+    this.EntityModel = params.entityModel;
   }
 
   private _uploadFile = (req): Promise<UploadResult> => new Promise((resolve, reject) => {
@@ -58,23 +67,46 @@ class FileService {
     });
   });
 
-  createFile = async req => {
+  createFile = async (req, entity: T) => {
     // console.dir(req, { depth: 1 });
-    const file = await this._uploadFile(req);
-    return this.Model.create({
-      fileName: file.metadata.originalName,
-      key: file.key,
-      size: file.size,
-      url: file.location,
-      type: file.mimetype.split('/')[0],
-      ext: file.metadata.ext,
+    const uploaded = await this._uploadFile(req);
+    const file = await this.Model.create({
+      key: uploaded.key,
+      fileName: uploaded.metadata.originalName,
+      url: uploaded.location,
+      type: uploaded.mimetype.split('/')[0],
+      ext: uploaded.metadata.ext,
+      size: uploaded.size,
+      entity,
       createdBy: req.user,
     });
+    const updated = await this.EntityModel.updateOne({ _id: entity._id }, {
+      $addToSet: {
+        files: file,
+      },
+    });
+    return {
+      uploaded,
+      file,
+      updated,
+    };
   };
 
   deleteFile = async id => {
-    const result = await this._deleteFile(id);
-    return this.Model.findOneAndDelete({ key: id });
+    const deleted = await this._deleteFile(id);
+    const removed = await this.Model.findOneAndDelete({ key: id });
+
+    return {
+      deleted,
+      removed,
+    };
+  };
+
+  deleteFilesOfEntity = async id => {
+    const files = await this.Model.find({ entity: id });
+    const results = Promise.all(
+      files.map(async ({ key }) => this._deleteFile(key)),
+    );
   };
 
   getAllFiles = async () => {

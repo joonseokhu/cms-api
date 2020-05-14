@@ -4,9 +4,10 @@ import { useQuery, stringifyID } from '@utils/db';
 import { Model, Document } from 'mongoose';
 import createTagSchema, { Tag } from './model';
 
-type entityParams<T extends Document> = {
+type ConstructorParams<T extends Document> = {
   name: string,
-  model: Model<T>,
+  entityName: string,
+  entityModel: Model<T>,
 };
 
 type createTagParams = {
@@ -20,9 +21,9 @@ class TagService<T extends Document> {
 
   EntityModel: Model<T>;
 
-  constructor(name: string, entity: entityParams<T>) {
-    this.Model = createTagSchema<T>(name, entity.name);
-    this.EntityModel = entity.model;
+  constructor(params: ConstructorParams<T>) {
+    this.Model = createTagSchema<T>(params.name, params.entityName);
+    this.EntityModel = params.entityModel;
   }
 
   createTag = async (params: createTagParams) => {
