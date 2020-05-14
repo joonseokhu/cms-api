@@ -104,9 +104,14 @@ class FileService<T extends Document> {
 
   deleteFilesOfEntity = async id => {
     const files = await this.Model.find({ entity: id });
-    const results = Promise.all(
-      files.map(async ({ key }) => this._deleteFile(key)),
+    const s3Result = await Promise.all(
+      files.map(({ key }) => this._deleteFile(key)),
     );
+    const dbResult = await this.Model.deleteMany({ entity: id });
+    return {
+      s3Result,
+      dbResult,
+    };
   };
 
   getAllFiles = async () => {
