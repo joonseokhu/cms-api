@@ -8,6 +8,8 @@ import {
   voteArticle,
   createArticleTag,
   getArticleTags,
+  uploadArticleFile,
+  deleteArticleFile,
   // getTagsOfArticle,
 } from '@/components/Article/controllers';
 
@@ -33,6 +35,9 @@ router.delete('/:id', deleteArticle);
 
 router.post('/:id/vote/:vote', voteArticle);
 router.delete('/:id/vote/:vote', voteArticle);
+
+router.post('/:articleID/file', uploadArticleFile);
+router.post('/file/:fileID', deleteArticleFile);
 
 router.post('/:articleID/comment', createComment);
 router.get('/:articleID/comment', getAllComments);

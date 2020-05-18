@@ -67,7 +67,7 @@ class FileService<T extends Document> {
     });
   });
 
-  createFile = async (req, entity: T) => {
+  createFile = async (req, entityID) => {
     // console.dir(req, { depth: 1 });
     const uploaded = await this._uploadFile(req);
     const file = await this.Model.create({
@@ -77,18 +77,23 @@ class FileService<T extends Document> {
       type: uploaded.mimetype.split('/')[0],
       ext: uploaded.metadata.ext,
       size: uploaded.size,
-      entity,
+      entity: entityID,
       createdBy: req.user,
     });
-    const updated = await this.EntityModel.updateOne({ _id: entity._id }, {
+    const updated = await this.EntityModel.updateOne({ _id: entityID }, {
       $addToSet: {
-        files: file,
+        files: file.id,
       },
     });
+    // return {
+    //   uploaded,
+    //   file,
+    //   updated,
+    // };
     return {
-      uploaded,
-      file,
-      updated,
+      url: uploaded.location,
+      key: uploaded.key,
+      id: file.id,
     };
   };
 

@@ -1,5 +1,6 @@
 import * as articleService from '@/components/Article/services';
-import { $ArticleTag } from '@components/Article/model';
+
+import { $ArticleTag, $ArticleFile } from '@components/Article/model';
 import {
   Controller, validate, authorize, useControl,
 } from '@/api';
@@ -78,8 +79,21 @@ export const updateArticle = Controller([], async (req, OK, NO) => {
 
 export const deleteArticle = Controller([], async (req, OK, NO) => {
   const { id } = req.params;
-  await articleService.deleteArticle({ id, user: req.user });
-  return OK();
+  const _ = await articleService.deleteArticle({ id, user: req.user });
+  const fileDeleteResult = await $ArticleFile.deleteFilesOfEntity(id);
+  return OK(fileDeleteResult);
+});
+
+export const uploadArticleFile = Controller([], async (req, OK, NO) => {
+  const { articleID } = req.params;
+  const result = await $ArticleFile.createFile(req, articleID);
+  return OK(result);
+});
+
+export const deleteArticleFile = Controller([], async (req, OK, NO) => {
+  const { fileID } = req.params;
+  const result = await $ArticleFile.deleteFile(fileID);
+  return OK(result);
 });
 
 export const createArticleTag = Controller([
